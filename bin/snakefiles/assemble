@@ -1,0 +1,130 @@
+include: snakefiles + "simplify_fasta.py"
+
+rule megahit:
+    """
+    Run Megahit assembly on fastq
+    """
+    input:
+        forward = qc_dir + "{sample}/filtered/{sample}.R1.trimmed.filtered.fastq.gz",
+        reverse = qc_dir + "{sample}/filtered/{sample}.R2.trimmed.filtered.fastq.gz"
+    output:
+        assemble_dir + "{sample}/megahit/{sample}.contigs.fa"
+    params:
+        memory = 128
+    threads:
+        8
+    log:
+        assemble_dir + "logs/megahit_{sample}.log"
+    benchmark:
+        "benchmarks/assemble/megahit.{sample}.json"
+    run:
+        with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
+            mem_b = params.memory * 1000000000
+            outdir = os.path.dirname(output[0])
+            shell("""
+                  rm -r {outdir}
+
+                  megahit -1 {input.forward} -2 {input.reverse} \
+                  -m {mem_b} -t {threads} -o {temp_dir} \
+                  --out-prefix {wildcards.sample} --tmp-dir {temp_dir} \
+                  2> {log} 1>&2
+
+                  scp {temp_dir}/{{*.log,*.fa,*.txt}} {outdir}/.
+                  """)
+
+
+rule metaspades:
+    input:
+        forward = qc_dir + "{sample}/filtered/{sample}.R1.trimmed.filtered.fastq.gz",
+        reverse = qc_dir + "{sample}/filtered/{sample}.R2.trimmed.filtered.fastq.gz"
+    output:
+        assemble_dir + "{sample}/metaspades/{sample}.contigs.fa"
+    log:
+        assemble_dir + "logs/metaspades_{sample}.log"
+    benchmark:
+        "benchmarks/assemble/metaspades.{sample}.json"
+    params:
+        mem=120
+    threads:
+        8
+    run:
+        with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
+            outdir = os.path.dirname(output[0])
+            contigs_fp = os.path.abspath(os.path.join(outdir,'contigs.fasta'))
+            shell("""
+                    spades.py --meta -t {threads} -m {params.mem} \
+                    -1 {input.forward} -2 {input.reverse} -o {temp_dir} \
+                    2> {log} 1>&2
+
+                    scp -r {temp_dir}/{{spades.log,*.fasta,assembly_graph*,*.paths}} {outdir}/.
+
+                    ln -s {contigs_fp} {outdir}/{wildcards.sample}.contigs.fa
+                  """)
+
+
+rule metaquast:
+    input:
+        lambda wildcards: expand(assemble_dir + "{sample}/{assembler}/{sample}.contigs.fa",
+                                 assembler = config['assemblers'],
+                                 sample = wildcards.sample)
+    output:
+        touch(assemble_dir + "{sample}/metaquast/done.txt")
+    log:
+        assemble_dir + "logs/metaquast_{sample}.log"
+    threads:
+        8
+    run:
+        outdir = os.path.dirname(output[0])
+        assemblies = ' '.join(input)
+        shell("""
+                metaquast.py -t {threads} -o {outdir} \
+                {assemblies} 2> {log} 1>&2
+              """)
+
+
+rule quast:
+    input:
+        lambda wildcards: expand(assemble_dir + "{sample}/{assembler}/{sample}.contigs.fa",
+                                 assembler = config['assemblers'],
+                                 sample = wildcards.sample)
+    output:
+        touch(assemble_dir + "{sample}/quast/done.txt")
+    log:
+        assemble_dir + "logs/quast_{sample}.log"
+    threads:
+        8
+    run:
+        outdir = os.path.dirname(output[0])
+        assemblies = ' '.join(input)
+        shell("""
+                quast.py -t {threads} -o {outdir} \
+                {assemblies} 2> {log} 1>&2
+              """)
+
+
+rule simplify_fasta_headers:
+    input:
+        assemble_dir + "{sample}/{assembler}/{sample}.contigs.fa"
+    output:
+        fasta = assemble_dir + "{sample}/{assembler}/{sample}.contigs.simple.fa",
+        headers = assemble_dir + "{sample}/{assembler}/{sample}.contigs.headers.txt"
+    log:
+        assemble_dir + "logs/simplify_fasta_headers_{sample}.log"
+    threads:
+        1
+    run:
+        prepend = '{0}_{1}_contig_'.format(wildcards.sample,
+                                           wildcards.assembler)
+
+        simplify_headers(input[0], prepend=prepend,
+                         output_fp=output.fasta, header_fp=output.headers)
+
+
+rule assemble:
+    input:
+        expand(assemble_dir + "{sample}/{assembler}/{sample}.contigs.fa",
+               sample=samples, assembler=config['assemblers']),
+        expand(assemble_dir + "{sample}/metaquast/done.txt",
+               sample=samples),
+        expand(assemble_dir + "{sample}/quast/done.txt",
+               sample=samples)

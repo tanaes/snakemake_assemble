@@ -1,0 +1,88 @@
+rule bowtie2_index:
+    input:
+        assemble_dir + "{sample}/%s/{sample}.contigs.simple.fa" % config['mapping_assembler']
+    output:
+        touch(map_dir + "{sample}/mapping/{sample}.done")
+    log:
+        map_dir + "logs/bowtie2_index_{sample}.log"
+    benchmark:
+        "benchmarks/bin/bowtie2_index.{sample}.json"
+    threads:
+        8
+    run:
+        outdir = os.path.dirname(output[0])
+        shell("bowtie2-build {input} {outdir}/{wildcards.sample} 2> {log} 1>&2")
+
+
+rule bowtie2_map:
+    input:
+        idx = map_dir + "{sample}/mapping/{sample}.done",
+        forward = qc_dir + "{bin_sample}/filtered/{bin_sample}.R1.trimmed.filtered.fastq.gz",
+        reverse = qc_dir + "{bin_sample}/filtered/{bin_sample}.R2.trimmed.filtered.fastq.gz"
+    output:
+        temp(map_dir + "{sample}/mapping/{sample}_{bin_sample}.bam")
+    log:
+        bowtie = map_dir + "logs/bowtie2_map_{sample}_{bin_sample}.bowtie.log",
+        other = map_dir + "logs/bowtie2_map_{sample}_{bin_sample}.other.log"
+    benchmark:
+        "benchmarks/bin/bowtie2_index.{sample}_{bin_sample}.json"
+    threads:
+        8
+    run:
+        with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
+            idx_base = os.path.join(os.path.dirname(input.idx),
+                                    wildcards.sample)
+            shell("""
+                    bowtie2 -x {idx_base} -p {threads} --no-unal \
+                    -q -1 {input.forward} -2 {input.reverse} 2> {bowtie.log} | \
+                    samtools sort -O bam -l 0 -T {temp_dir} -o {temp_dir}/out.bam 2> {log.other}
+
+                    scp {temp_dir}/out.bam {output}
+                  """)
+
+
+rule faidx_index:
+    input:
+        assemble_dir + "{sample}/%s/{sample}.contigs.simple.fa" % config['mapping_assembler']
+    output:
+        assemble_dir + "{sample}/%s/{sample}.contigs.simple.fa.fai" % config['mapping_assembler']
+    log:
+        map_dir + "logs/faidx_index_{sample}.log"
+    benchmark:
+        "benchmarks/bin/faidx_index.{sample}.json"
+    threads:
+        1
+    run:
+        outdir = os.path.dirname(output[0])
+        shell("samtools faidx {input} 2> {log} 1>&2")
+
+rule cram:
+    input:
+        bam = map_dir + "{sample}/mapping/{sample}_{bin_sample}.bam",
+        ref_idx = assemble_dir + "{sample}/%s/{sample}.contigs.simple.fa.fai" % config['mapping_assembler'],
+        ref = assemble_dir + "{sample}/%s/{sample}.contigs.simple.fa" % config['mapping_assembler']
+    output:
+        map_dir + "{sample}/mapping/{sample}_{bin_sample}.cram"
+    params:
+        cram = config['params']['cram']
+    log:
+        map_dir + "logs/cram_{sample}_{bin_sample}.log"
+    benchmark:
+        "benchmarks/bin/cram_{sample}_{bin_sample}.json"
+    threads:
+        1
+    run:
+        if params.cram is None:
+            params.cram = ''
+        with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
+            shell("""                    
+                    cramtools cram -I {input.bam} -R {input.ref} \
+                    {params.cram} > {temp_dir}/output.cram 2> {log}
+
+                    scp {temp_dir}/output.cram {output}
+                  """)
+
+rule map:
+    input:
+        expand(map_dir + "{sample}/mapping/{sample}_{bin_sample}.cram",
+               sample=samples, bin_sample=config['binning_samples'])

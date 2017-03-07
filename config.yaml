@@ -1,0 +1,40 @@
+
+tmp_dir_root: ./
+
+software:
+  snakemake_folder: /Users/jonsanders/Development/git_sw/snakemake_assemble
+
+params:
+  skewer: -n -l 100 -m any -q 15
+  cram:
+  maxbin: -plotmarker
+
+binning_samples:
+  - sample1
+  - sample2
+
+assemblers:
+  - megahit
+  - metaspades
+
+mapping_assembler: metaspades
+
+samples:
+  sample1:
+    adapter: /Users/jonsanders/Development/git_sw/snakemake_assemble/adapters/HyperPlus.fa
+    filter_db: 
+    forward: 
+    - example/reads/Bs_L001_R1.fastq.gz
+    - example/reads/Bs_L002_R1.fastq.gz
+    reverse:
+    - example/reads/Bs_L001_R2.fastq.gz
+    - example/reads/Bs_L002_R2.fastq.gz
+  sample2:
+    adapter: /Users/jonsanders/Development/git_sw/snakemake_assemble/adapters/HyperPlus.fa
+    filter_db: 
+    forward: 
+    - example/reads/Vf_L001_R1.fastq.gz
+    - example/reads/Vf_L002_R1.fastq.gz
+    reverse:
+    - example/reads/Vf_L001_R2.fastq.gz
+    - example/reads/Vf_L002_R2.fastq.gz
