@@ -1,5 +1,3 @@
-include: snakefiles + "simplify_fasta.py"
-
 rule megahit:
     """
     Run Megahit assembly on fastq

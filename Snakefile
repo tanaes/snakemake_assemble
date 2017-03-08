@@ -12,6 +12,8 @@ samples = config["samples"]
 snakefiles = os.path.join(config["software"]["snakemake_folder"],
                           "bin/snakefiles/")
 
+include: snakefiles + "simplify_fasta.py"
+
 include: snakefiles + "folders"
 include: snakefiles + "raw"
 include: snakefiles + "qc"
