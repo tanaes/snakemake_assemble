@@ -122,7 +122,6 @@ rule raw:
     """
     input:
         expand(data_dir + "{sample}/{sample}_links.done", sample=samples),
-        expand(raw_dir + "{sample}/fastqc_per_file/{sample}.done", sample=samples),
         raw_dir + "multiQC_per_file/multiqc_report.html",
         raw_dir + "multiQC_per_sample/multiqc_report.html"
 
