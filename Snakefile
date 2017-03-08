@@ -10,9 +10,6 @@ shell.prefix("set +u; " + ENV + "; set -u")
 
 TMP_DIR_ROOT = config['tmp_dir_root']
 
-
-samples = config["samples"]
-
 snakefiles = os.path.join(config["software"]["snakemake_folder"],
                           "bin/snakefiles/")
 
@@ -27,6 +24,8 @@ include: snakefiles + "bin"
 include: snakefiles + "clean"
 include: snakefiles + "test"
 
+
+samples = config["samples"]
 
 rule all:
     # raw

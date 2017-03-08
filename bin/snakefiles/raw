@@ -1,4 +1,4 @@
-rule raw_make_links:
+rule raw_make_links:    
     """
     Makes symlinks from raw sequences files to the analysis directory.
     """
@@ -28,7 +28,8 @@ rule raw_per_file_fastqc:
         forward = lambda wildcards: config["samples"][wildcards.sample]["forward"],
         reverse = lambda wildcards: config["samples"][wildcards.sample]["reverse"]
     output:
-        touch(raw_dir + "{sample}/fastqc_per_file/{sample}.done")
+        html = raw_dir + "{sample}/fastqc_per_sample/{sample}.R1_fastqc.html",
+        zip = raw_dir + "{sample}/fastqc_per_sample/{sample}.R2_fastqc.zip"
     threads:
         4
     log:
@@ -44,7 +45,7 @@ rule raw_per_file_multiqc:
     Runs multiqc for set of individual input files.
     """
     input:
-        expand(raw_dir + "{sample}/fastqc_per_file/{sample}.done", sample=samples)
+        expand("{sample}/fastqc_per_sample/{sample}.R2_fastqc.zip", sample=samples)
     output:
         raw_dir + "multiQC_per_file/multiqc_report.html"
     threads:
@@ -87,7 +88,6 @@ rule raw_per_sample_fastqc:
         forward = raw_dir + "{sample}/combined_reads/{sample}.R1.fastq.gz",
         reverse = raw_dir + "{sample}/combined_reads/{sample}.R2.fastq.gz"
     output:
-        touch(raw_dir + "{sample}/fastqc_per_sample/{sample}.done"),
         html = raw_dir + "{sample}/fastqc_per_sample/{sample}.R1_fastqc.html",
         zip = raw_dir + "{sample}/fastqc_per_sample/{sample}.R2_fastqc.zip"
     threads:
@@ -104,7 +104,7 @@ rule raw_per_sample_multiqc:
     Runs multiqc for combined input files.
     """
     input:
-        expand(raw_dir + "{sample}/fastqc_per_sample/{sample}.done", sample=samples),
+        expand(raw_dir + "{sample}/fastqc_per_sample/{sample}.R2_fastqc.zip", sample=samples),
     output:
         raw_dir + "multiQC_per_sample/multiqc_report.html"
     threads:
