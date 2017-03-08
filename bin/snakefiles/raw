@@ -45,7 +45,7 @@ rule raw_per_file_multiqc:
     Runs multiqc for set of individual input files.
     """
     input:
-        expand("{sample}/fastqc_per_sample/{sample}.R2_fastqc.zip", sample=samples)
+        expand(raw_dir + "{sample}/fastqc_per_sample/{sample}.R2_fastqc.zip", sample=samples)
     output:
         raw_dir + "multiQC_per_file/multiqc_report.html"
     threads:
