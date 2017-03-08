@@ -70,7 +70,7 @@ rule cram:
     benchmark:
         "benchmarks/bin/cram_{sample}_{bin_sample}.json"
     threads:
-        1
+        2
     run:
         if params.cram is None:
             params.cram = ''

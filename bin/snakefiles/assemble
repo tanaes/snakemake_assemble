@@ -8,9 +8,9 @@ rule megahit:
     output:
         assemble_dir + "{sample}/megahit/{sample}.contigs.fa"
     params:
-        memory = 128
+        memory = 120
     threads:
-        8
+        12
     log:
         assemble_dir + "logs/megahit_{sample}.log"
     benchmark:

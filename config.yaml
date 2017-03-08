@@ -1,6 +1,8 @@
 
 tmp_dir_root: ./
 
+env: source activate snakemake_assemble
+
 software:
   snakemake_folder: ./
 

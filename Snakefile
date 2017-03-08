@@ -1,8 +1,11 @@
 import os
 import tempfile
 
-shell.prefix("set -euo pipefail;")
 configfile: "config.yaml"
+
+ENV = config["env"]
+
+shell.prefix("set -euo pipefail;" + ENV_ANVI + '; ')
 
 TMP_DIR_ROOT = config['tmp_dir_root']
 

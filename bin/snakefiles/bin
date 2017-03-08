@@ -18,7 +18,7 @@ rule bin_make_cov_files:
             for cram in input.crams:
                 fn = os.path.basename(cram).split('.')[0]
                 shell("""
-                        samtools view -O SAM -T {input.ref} {cram} -h | \
+                        samtools view -O SAM -T {input.ref} {cram} --threads {threads} -h | \
                         pileup.sh out={temp_dir}/{fn}_pileup.txt 2> {log} 1>&2
 
                         awk '{{print $1"\t"$2}}' {temp_dir}/{fn}_pileup.txt | \
@@ -54,7 +54,7 @@ rule bin_run_maxbin:
                 params.maxbin = ''
             shell("""
                     run_MaxBin.pl -contig {input.ref} -out {out_base}/{wildcards.sample} \
-                    -abund_list {input.abund} {params.maxbin} 2> {log} 1>&2
+                    -abund_list {input.abund} {params.maxbin} -thread {threads} 2> {log} 1>&2
                   """)
 
 rule bin_maxbin:
