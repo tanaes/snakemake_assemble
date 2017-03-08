@@ -5,11 +5,12 @@ configfile: "config.yaml"
 
 ENV = config["env"]
 
-shell.prefix("set +u; " + ENV + "; set -u")
+shell.prefix("set +u; " + ENV + "; set -u; ")
 
 TMP_DIR_ROOT = config['tmp_dir_root']
 
 samples = config["samples"]
+
 
 snakefiles = os.path.join(config["software"]["snakemake_folder"],
                           "bin/snakefiles/")
@@ -24,7 +25,6 @@ include: snakefiles + "map"
 include: snakefiles + "bin"
 include: snakefiles + "clean"
 include: snakefiles + "test"
-
 
 rule all:
     # raw
