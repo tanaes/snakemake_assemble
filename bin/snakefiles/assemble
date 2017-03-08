@@ -20,14 +20,14 @@ rule assemble_megahit:
             mem_b = params.memory * 1000000000
             outdir = os.path.dirname(output[0])
             shell("""
-                  rm -r {outdir}
+                  #rm -r {outdir}
 
                   megahit -1 {input.forward} -2 {input.reverse} \
-                  -m {mem_b} -t {threads} -o {temp_dir} \
-                  --out-prefix {wildcards.sample} --tmp-dir {temp_dir} \
+                  -m {mem_b} -t {threads} -o {temp_dir}/megahit \
+                  --out-prefix {wildcards.sample} \
                   2> {log} 1>&2
 
-                  scp {temp_dir}/{{*.log,*.fa,*.txt}} {outdir}/.
+                  scp {temp_dir}/megahit/{{*.log,*.fa,*.txt}} {outdir}/.
                   """)
 
 
