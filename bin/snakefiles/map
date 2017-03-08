@@ -1,4 +1,4 @@
-rule bowtie2_index:
+rule map_bowtie2_index:
     input:
         assemble_dir + "{sample}/%s/{sample}.contigs.simple.fa" % config['mapping_assembler']
     output:
@@ -14,7 +14,7 @@ rule bowtie2_index:
         shell("bowtie2-build {input} {outdir}/{wildcards.sample} 2> {log} 1>&2")
 
 
-rule bowtie2_map:
+rule map_bowtie2:
     input:
         idx = map_dir + "{sample}/mapping/{sample}.done",
         forward = qc_dir + "{bin_sample}/filtered/{bin_sample}.R1.trimmed.filtered.fastq.gz",
@@ -41,7 +41,7 @@ rule bowtie2_map:
                   """)
 
 
-rule faidx_index:
+rule map_faidx_index:
     input:
         assemble_dir + "{sample}/%s/{sample}.contigs.simple.fa" % config['mapping_assembler']
     output:
@@ -56,7 +56,7 @@ rule faidx_index:
         outdir = os.path.dirname(output[0])
         shell("samtools faidx {input} 2> {log} 1>&2")
 
-rule cram:
+rule map_cram:
     input:
         bam = map_dir + "{sample}/mapping/{sample}_{bin_sample}.bam",
         ref_idx = assemble_dir + "{sample}/%s/{sample}.contigs.simple.fa.fai" % config['mapping_assembler'],

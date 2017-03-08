@@ -11,7 +11,6 @@ TMP_DIR_ROOT = config['tmp_dir_root']
 
 samples = config["samples"]
 
-
 snakefiles = os.path.join(config["software"]["snakemake_folder"],
                           "bin/snakefiles/")
 

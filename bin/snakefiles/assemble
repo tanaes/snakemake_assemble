@@ -1,4 +1,4 @@
-rule megahit:
+rule assemble_megahit:
     """
     Run Megahit assembly on fastq
     """
@@ -31,7 +31,7 @@ rule megahit:
                   """)
 
 
-rule metaspades:
+rule assemble_metaspades:
     input:
         forward = qc_dir + "{sample}/filtered/{sample}.R1.trimmed.filtered.fastq.gz",
         reverse = qc_dir + "{sample}/filtered/{sample}.R2.trimmed.filtered.fastq.gz"
@@ -60,7 +60,7 @@ rule metaspades:
                   """)
 
 
-rule metaquast:
+rule assemble_metaquast:
     input:
         lambda wildcards: expand(assemble_dir + "{sample}/{assembler}/{sample}.contigs.fa",
                                  assembler = config['assemblers'],
@@ -80,7 +80,7 @@ rule metaquast:
               """)
 
 
-rule quast:
+rule assemble_quast:
     input:
         lambda wildcards: expand(assemble_dir + "{sample}/{assembler}/{sample}.contigs.fa",
                                  assembler = config['assemblers'],
@@ -100,7 +100,7 @@ rule quast:
               """)
 
 
-rule simplify_fasta_headers:
+rule assemble_simplify_fasta_headers:
     input:
         assemble_dir + "{sample}/{assembler}/{sample}.contigs.fa"
     output:
