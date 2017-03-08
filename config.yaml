@@ -2,7 +2,7 @@
 tmp_dir_root: ./
 
 software:
-  snakemake_folder: /Users/jonsanders/Development/git_sw/snakemake_assemble
+  snakemake_folder: ./
 
 params:
   skewer: -n -l 100 -m any -q 15
@@ -21,7 +21,7 @@ mapping_assembler: metaspades
 
 samples:
   sample1:
-    adapter: /Users/jonsanders/Development/git_sw/snakemake_assemble/adapters/HyperPlus.fa
+    adapter: ./adapters/HyperPlus.fa
     filter_db: 
     forward: 
     - example/reads/Bs_L001_R1.fastq.gz
@@ -30,7 +30,7 @@ samples:
     - example/reads/Bs_L001_R2.fastq.gz
     - example/reads/Bs_L002_R2.fastq.gz
   sample2:
-    adapter: /Users/jonsanders/Development/git_sw/snakemake_assemble/adapters/HyperPlus.fa
+    adapter: ./adapters/HyperPlus.fa
     filter_db: 
     forward: 
     - example/reads/Vf_L001_R1.fastq.gz
