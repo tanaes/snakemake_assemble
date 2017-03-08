@@ -7,7 +7,7 @@ software:
   snakemake_folder: ./
 
 params:
-  skewer: -n -l 100 -m any -q 15
+  skewer: -x ./adapters/HyperPlus.fa -n -l 100 -m any -q 15
   cram:
   maxbin: -plotmarker
 
@@ -23,7 +23,6 @@ mapping_assembler: metaspades
 
 samples:
   sample1:
-    adapter: ./adapters/HyperPlus.fa
     filter_db: 
     forward: 
     - example/reads/Bs_L001_R1.fastq.gz
@@ -32,7 +31,6 @@ samples:
     - example/reads/Bs_L001_R2.fastq.gz
     - example/reads/Bs_L002_R2.fastq.gz
   sample2:
-    adapter: ./adapters/HyperPlus.fa
     filter_db: 
     forward: 
     - example/reads/Vf_L001_R1.fastq.gz

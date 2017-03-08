@@ -11,7 +11,6 @@ rule qc_skewer:
     threads:
         4
     params:
-        adapter = lambda wildcards: config['samples'][wildcards.sample]['adapter'],
         skewer = config['params']['skewer']
     log:
         qc_dir + "logs/qc_skewer.{sample}.log"
@@ -20,7 +19,7 @@ rule qc_skewer:
     run:
         with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
             shell("""
-                    skewer -x {params.adapter} {params.skewer} -o {temp_dir}/{wildcards.sample} {input.forward} {input.reverse}
+                    skewer {params.skewer} -o {temp_dir}/{wildcards.sample} {input.forward} {input.reverse}
 
                     pigz -c {temp_dir}/{wildcards.sample}-trimmed-pair1.fastq > {temp_dir}/{wildcards.sample}.trimmed.R1.fastq.gz
                     pigz -c {temp_dir}/{wildcards.sample}-trimmed-pair2.fastq > {temp_dir}/{wildcards.sample}.trimmed.R2.fastq.gz
