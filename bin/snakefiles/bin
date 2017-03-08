@@ -53,7 +53,7 @@ rule bin_run_maxbin:
             if params.maxbin is None:
                 params.maxbin = ''
             shell("""
-                    run_MaxBin.pl -contig {input.ref} -out {wildcards.sample} \
+                    run_MaxBin.pl -contig {input.ref} -out {out_base}/{wildcards.sample} \
                     -abund_list {input.abund} {params.maxbin} 2> {log} 1>&2
                   """)
 
@@ -65,4 +65,6 @@ rule bin_maxbin:
 rule bin:
     input:
         expand(bin_dir + "{sample}/abundance_files/{sample}_abund_list.txt",
+               sample = samples),
+        expand(bin_dir + "{sample}/maxbin/{sample}.summary",
                sample = samples)
