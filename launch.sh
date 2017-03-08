@@ -5,7 +5,7 @@ if [ "$#" -lt 1 ]; then
     exit
 fi
 
-outdir=$@
+outdir=$1
 
 mkdir $outdir/cluster_logs
 
