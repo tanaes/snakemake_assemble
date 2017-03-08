@@ -96,6 +96,7 @@ rule raw_per_sample_fastqc:
         raw_dir + "logs/raw_per_sample_fastqc.{sample}.log"
     run:
         out_dir = os.path.dirname(output[0])
+        print(out_dir)
         shell("fastqc --threads {threads} --outdir {out_dir} {input.forward} {input.reverse} 2> {log} 1>&2")
 
 
