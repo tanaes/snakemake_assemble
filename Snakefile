@@ -5,7 +5,8 @@ configfile: "config.yaml"
 
 ENV = config["env"]
 
-shell.prefix("set -euo pipefail;" + ENV + '; ')
+
+shell.prefix("set +u; " + ENV + "; set -u")
 
 TMP_DIR_ROOT = config['tmp_dir_root']
 
