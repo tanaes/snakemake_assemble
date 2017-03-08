@@ -1,5 +1,5 @@
 # create conda env
-conda env create -y -f bin/install/requirements.yaml
+conda env create -f bin/install/requirements.yaml
 
 source activate conda
 

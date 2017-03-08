@@ -12,7 +12,6 @@ bedtools
 samtools
 cramtools
 megahit
-quast
 spades
 maxbin2
 bbmap
