@@ -11,6 +11,8 @@ params:
   cram:
   maxbin: -plotmarker
 
+memusg: True
+
 binning_samples:
   - sample1
   - sample2
