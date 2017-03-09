@@ -19,7 +19,10 @@ rule assemble_megahit:
         with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
             mem_b = params.memory * 1000000000
             outdir = os.path.dirname(output[0])
-            shell("""megahit -1 {input.forward} -2 {input.reverse} \
+            shell("""
+                  #rm -r {outdir}
+
+                  megahit -1 {input.forward} -2 {input.reverse} \
                   -m {mem_b} -t {threads} -o {temp_dir}/megahit \
                   --out-prefix {wildcards.sample} \
                   2> {log} 1>&2
@@ -46,7 +49,8 @@ rule assemble_metaspades:
         with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
             outdir = os.path.dirname(output[0])
             contigs_fp = os.path.abspath(os.path.join(outdir,'contigs.fasta'))
-            shell("""spades.py --meta -t {threads} -m {params.mem} \
+            shell("""
+                    spades.py --meta -t {threads} -m {params.mem} \
                     -1 {input.forward} -2 {input.reverse} -o {temp_dir} \
                     2> {log} 1>&2
 
@@ -72,7 +76,8 @@ rule assemble_metaquast:
 
             outdir = os.path.dirname(output[0])
             assemblies = ' '.join(input)
-            shell("""metaquast.py -t {threads} -o {temp_dir}/metaquast \
+            shell("""
+                    metaquast.py -t {threads} -o {temp_dir}/metaquast \
                     {assemblies} 2> {log} 1>&2
 
                     cp -r {temp_dir}/metaquast {outdir}
@@ -95,7 +100,8 @@ rule assemble_quast:
 
             outdir = os.path.dirname(output[0])
             assemblies = ' '.join(input)
-            shell("""quast.py -t {threads} -o {temp_dir}/quast \
+            shell("""
+                    quast.py -t {threads} -o {temp_dir}/quast \
                     {assemblies} 2> {log} 1>&2
 
                     cp -r {temp_dir}/quast {outdir}

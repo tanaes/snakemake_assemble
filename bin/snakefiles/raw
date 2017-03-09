@@ -10,7 +10,7 @@ rule raw_make_links:
     threads:
         1
     log:
-        raw_dir + "logs/raw_make_links.{sample}.log"
+        raw_dir + "logs/raw_combined_reads.{sample}.log"
     run:
         for f in input.forward + input.reverse:
             in_fp = os.path.realpath(f)
