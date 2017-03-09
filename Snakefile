@@ -38,9 +38,9 @@ rule all:
     # Assembly
         expand(assemble_dir + "{sample}/{assembler}/{sample}.contigs.fa",
                sample=samples, assembler=config['assemblers']),
-        expand(assemble_dir + "{sample}/metaquast/done.txt",
+        expand(assemble_dir + "{sample}/metaquast/report.html",
                sample=samples),
-        expand(assemble_dir + "{sample}/quast/done.txt",
+        expand(assemble_dir + "{sample}/quast/report.html",
                sample=samples),
     # Mapping
         expand(map_dir + "{sample}/mapping/{sample}_{bin_sample}.cram",
