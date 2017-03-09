@@ -18,8 +18,7 @@ rule qc_skewer:
         "benchmarks/qc/qc_skewer.{sample}.json"
     run:
         with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
-            shell("""
-                    skewer --threads {threads} {params.skewer} -o {temp_dir}/{wildcards.sample} {input.forward} {input.reverse}
+            shell("""skewer --threads {threads} {params.skewer} -o {temp_dir}/{wildcards.sample} {input.forward} {input.reverse}
 
                     pigz -c {temp_dir}/{wildcards.sample}-trimmed-pair1.fastq > {temp_dir}/{wildcards.sample}.trimmed.R1.fastq.gz
                     pigz -c {temp_dir}/{wildcards.sample}-trimmed-pair2.fastq > {temp_dir}/{wildcards.sample}.trimmed.R2.fastq.gz
@@ -75,8 +74,7 @@ rule qc_filter:
                   """)
         else:
             with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
-                shell("""
-                      bowtie2 -p {threads} -x {params.filter_db} --very-sensitive -1 {input.forward} -2 {input.reverse} 2> {log.bowtie}| \
+                shell("""bowtie2 -p {threads} -x {params.filter_db} --very-sensitive -1 {input.forward} -2 {input.reverse} 2> {log.bowtie}| \
                       samtools view -f 12 -F 256 2> {log.other}| \
                       samtools sort -T {temp_dir} -@ {threads} -n 2> {log.other} | \
                       samtools view -bS 2> {log.other} | \

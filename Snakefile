@@ -5,14 +5,20 @@ configfile: "config.yaml"
 
 ENV = config["env"]
 
-shell.prefix("set +u; " + ENV + "; set -u; ")
-
 TMP_DIR_ROOT = config['tmp_dir_root']
 
 samples = config["samples"]
 
 snakefiles = os.path.join(config["software"]["snakemake_folder"],
                           "bin/snakefiles/")
+
+scripts_dir =  os.path.join(config["software"]["snakemake_folder"],
+                          "bin/scripts/")
+
+
+shell.prefix("set +u; " + ENV + "; set -u; " +
+             os.path.join(scripts_dir, 'memusg '))
+
 
 include: snakefiles + "simplify_fasta.py"
 
