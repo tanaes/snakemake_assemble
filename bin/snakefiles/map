@@ -34,7 +34,7 @@ rule map_bowtie2:
                                     wildcards.sample)
             shell("""
                     bowtie2 -x {idx_base} -p {threads} --no-unal \
-                    -q -1 {input.forward} -2 {input.reverse} 2> {bowtie.log} | \
+                    -q -1 {input.forward} -2 {input.reverse} 2> {log.bowtie} | \
                     samtools sort -O bam -l 0 -T {temp_dir} -o {temp_dir}/out.bam 2> {log.other}
 
                     scp {temp_dir}/out.bam {output}
