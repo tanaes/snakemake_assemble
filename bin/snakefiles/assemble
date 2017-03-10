@@ -80,7 +80,7 @@ rule assemble_metaquast:
                     metaquast.py -t {threads} -o {temp_dir}/metaquast \
                     {assemblies} 2> {log} 1>&2
 
-                    cp -r {temp_dir}/metaquast {outdir}
+                    cp -r {temp_dir}/metaquast/* {outdir}/.
                   """)
 
 
@@ -104,7 +104,7 @@ rule assemble_quast:
                     quast.py -t {threads} -o {temp_dir}/quast \
                     {assemblies} 2> {log} 1>&2
 
-                    cp -r {temp_dir}/quast {outdir}
+                    cp -r {temp_dir}/quast/* {outdir}/.
                   """)
 
 
