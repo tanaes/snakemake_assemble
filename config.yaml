@@ -2,6 +2,7 @@
 tmp_dir_root: ./
 
 env: source activate snakemake_assemble
+anvi_env: source activate anvio
 
 software:
   snakemake_folder: ./

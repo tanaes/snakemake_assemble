@@ -61,7 +61,7 @@ rule bin_run_maxbin:
 rule bin_maxbin:
     input:
         expand(bin_dir + "{bin_sample}/maxbin/{bin_sample}.summary",
-               sample = samples)
+               bin_sample = config['binning_samples'])
 
 rule bin:
     input:

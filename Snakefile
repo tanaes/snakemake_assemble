@@ -22,6 +22,7 @@ include: snakefiles + "qc"
 include: snakefiles + "assemble"
 include: snakefiles + "map"
 include: snakefiles + "bin"
+include: snakefiles + "anvio"
 include: snakefiles + "clean"
 include: snakefiles + "test"
 
@@ -43,10 +44,14 @@ rule all:
         expand(assemble_dir + "{sample}/quast/report.html",
                sample=samples),
     # Mapping
-        expand(map_dir + "{sample}/mapping/{sample}_{bin_sample}.cram",
-               sample=samples, bin_sample=config['binning_samples']),
+        expand(map_dir + "{bin_sample}/mapping/{bin_sample}_{abund_sample}.cram",
+               sample=samples, bin_sample=config['binning_samples'],
+               abund_sample=config['abundance_samples']),
     # Binning
-        expand(bin_dir + "{sample}/abundance_files/{sample}_abund_list.txt",
-               sample = samples),
-        expand(bin_dir + "{sample}/maxbin/{sample}.summary",
-               sample = samples)
+        expand(bin_dir + "{bin_sample}/abundance_files/{bin_sample}_abund_list.txt",
+               bin_sample=config['binning_samples']),
+        expand(bin_dir + "{bin_sample}/maxbin/{bin_sample}.summary",
+               bin_sample=config['binning_samples']),
+    # Anvio
+        expand(anvio_dir + "{bin_sample}/{bin_sample}_SAMPLES-SUMMARY/index.html",
+               bin_sample=config['binning_samples'])

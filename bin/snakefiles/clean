@@ -18,6 +18,10 @@ rule clean_bin:
     shell:
         "rm -rf " + bin_dir
 
+rule clean_anvio:
+    shell:
+        "rm -rf " + anvio_dir
+
 rule clean:
     shell:
         "rm -rf " +
