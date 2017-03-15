@@ -122,7 +122,7 @@ rule anvi_profile:
         anvio_dir + "logs/anvi_profile.{bin_sample}.{abund_sample}.log"
     benchmark:
         "benchmarks/anvio/anvi_profile.{bin_sample}.{abund_sample}.json"
-    threads: 8
+    threads: 4
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             prof_dir = os.path.dirname(output.prof)
@@ -132,7 +132,7 @@ rule anvi_profile:
                     set +u; {ANVIO_ENV}; set -u
 
                     anvi-profile -i {input.bam} \
-                    --num-threads {threads} --write-buffer-size 2000 \
+                    --num-threads {threads} --write-buffer-size 500 \
                     -c {db} \
                     --overwrite-output-destinations \
                     -o {temp_dir}/out
