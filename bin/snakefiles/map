@@ -76,8 +76,8 @@ rule map_cram:
             params.cram = ''
         with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
             shell("""                    
-                    cramtools cram -I {input.bam} -R {input.ref} \
-                    {params.cram} > {temp_dir}/output.cram 2> {log}
+                    samtools view -C -h -T {input.ref} \
+                    {params.cram} {input.bam} -o {temp_dir}/output.cram 2> {log}
 
                     scp {temp_dir}/output.cram {output}
                   """)
