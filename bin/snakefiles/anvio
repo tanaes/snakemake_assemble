@@ -94,17 +94,17 @@ rule anvi_run_centrifuge:
                     scp {temp_dir}/{hits_name} {output.hits}
                     scp {temp_dir}/{report_name} {output.report}
 
-                    ln -s {output.hits} {db_dir}/centrifuge_hits.tsv
-                    ln -s {output.report} {db_dir}/{wildcards.bin_sample}/centrifuge_report.tsv
+                    # ln -s {output.hits} {db_dir}/centrifuge_hits.tsv
+                    # ln -s {output.report} {db_dir}/{wildcards.bin_sample}/centrifuge_report.tsv
 
-                    cd {db_dir}
+                    # cd {db_dir}
 
-                    anvi-import-taxonomy -c {input.db} \
-                    -i centrifuge_report.tsv centrifuge_hits.tsv \
-                    -p centrifuge
+                    # anvi-import-taxonomy -c {input.db} \
+                    # -i centrifuge_report.tsv centrifuge_hits.tsv \
+                    # -p centrifuge
 
-                    rm centrifuge_hits.tsv
-                    rm centrifuge_report.tsv
+                    # rm centrifuge_hits.tsv
+                    # rm centrifuge_report.tsv
                   """)
 
 rule anvi_profile:
