@@ -54,4 +54,6 @@ rule all:
                bin_sample=config['binning_samples']),
     # Anvio
         expand(anvio_dir + "{bin_sample}/{bin_sample}_SAMPLES-SUMMARY/index.html",
+               bin_sample=config['binning_samples']),
+        expand(anvio_dir + "{bin_sample}/{bin_sample}.db.anvi_add_maxbin.done",
                bin_sample=config['binning_samples'])
