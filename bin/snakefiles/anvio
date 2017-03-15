@@ -17,9 +17,9 @@ rule anvi_gen_contigs_database:
             shell("""
                     set +u; {ANVIO_ENV}; set -u
 
-                    anvi-gen-contigs-database -f {input} -o {temp_dir}/{output}
+                    anvi-gen-contigs-database -f {input} -o {temp_dir}/{dbname}
 
-                    scp {temp_dir}/{output}/{dbname} {output}
+                    scp {temp_dir}/{dbname} {output}
                   """)
 
 rule anvi_run_hmms:
