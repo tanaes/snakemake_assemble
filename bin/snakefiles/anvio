@@ -138,8 +138,6 @@ rule anvi_profile:
                     -o {temp_dir}/out
 
                     scp {temp_dir}/out/* {prof_dir}/.
-
-                    mv out
                   """)
 
 rule anvi_merge:
