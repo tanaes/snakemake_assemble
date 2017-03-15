@@ -17,7 +17,7 @@ rule qc_skewer:
     benchmark:
         "benchmarks/qc/qc_skewer.{sample}.json"
     run:
-        with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
+        with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             shell("""
                     skewer --threads {threads} {params.skewer} -o {temp_dir}/{wildcards.sample} {input.forward} {input.reverse}
 
@@ -74,7 +74,7 @@ rule qc_filter:
                     echo 'No DB provided; sample not filtered.' > {log.other}
                   """)
         else:
-            with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
+            with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
                 shell("""
                       bowtie2 -p {threads} -x {params.filter_db} --very-sensitive -1 {input.forward} -2 {input.reverse} 2> {log.bowtie}| \
                       samtools view -f 12 -F 256 2> {log.other}| \

@@ -25,6 +25,7 @@ include: snakefiles + "bin"
 include: snakefiles + "anvio"
 include: snakefiles + "clean"
 include: snakefiles + "test"
+include: snakefiles + "util"
 
 rule all:
     # raw
@@ -44,9 +45,9 @@ rule all:
         expand(assemble_dir + "{sample}/quast/report.html",
                sample=samples),
     # Mapping
-        expand(map_dir + "{bin_sample}/mapping/{bin_sample}_{abund_sample}.cram",
-               sample=samples, bin_sample=config['binning_samples'],
-               abund_sample=config['abundance_samples']),
+        # expand(map_dir + "{bin_sample}/mapping/{bin_sample}_{abund_sample}.cram",
+        #        sample=samples, bin_sample=config['binning_samples'],
+        #        abund_sample=config['abundance_samples']),
     # Binning
         expand(bin_dir + "{bin_sample}/abundance_files/{bin_sample}_abund_list.txt",
                bin_sample=config['binning_samples']),

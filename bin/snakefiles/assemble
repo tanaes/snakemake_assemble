@@ -16,7 +16,7 @@ rule assemble_megahit:
     benchmark:
         "benchmarks/assemble/megahit.{sample}.json"
     run:
-        with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
+        with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             mem_b = params.memory * 1000000000
             outdir = os.path.dirname(output[0])
             shell("""
@@ -46,7 +46,7 @@ rule assemble_metaspades:
     threads:
         8
     run:
-        with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
+        with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             outdir = os.path.dirname(output[0])
             contigs_fp = os.path.abspath(os.path.join(outdir,'contigs.fasta'))
             shell("""
@@ -74,7 +74,7 @@ rule assemble_metaquast:
     benchmark:
         "benchmarks/assemble/metaquast.{sample}.json"
     run:
-        with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
+        with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
 
             outdir = os.path.dirname(output[0])
             assemblies = ' '.join(input)
@@ -100,7 +100,7 @@ rule assemble_quast:
     benchmark:
         "benchmarks/assemble/quast.{sample}.json"
     run:
-        with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
+        with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
 
             outdir = os.path.dirname(output[0])
             assemblies = ' '.join(input)

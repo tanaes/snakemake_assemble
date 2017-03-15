@@ -30,7 +30,7 @@ rule map_bowtie2:
     threads:
         8
     run:
-        with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
+        with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             idx_base = os.path.join(os.path.dirname(input.idx),
                                     wildcards.bin_sample)
             shell("""
@@ -78,7 +78,7 @@ rule map_cram:
     run:
         if params.cram is None:
             params.cram = ''
-        with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
+        with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             shell("""                    
                     samtools view -@ {threads} -C -h -T {input.ref} \
                     {params.cram} {input.bam} -o {temp_dir}/output.cram 2> {log}

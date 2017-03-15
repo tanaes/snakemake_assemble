@@ -13,7 +13,7 @@ rule bin_make_cov_files:
     threads:
         8
     run:
-        with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
+        with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             out_dir = os.path.dirname(output[0])
             abund_list = ''
             for bam in input.bams:
@@ -49,7 +49,7 @@ rule bin_run_maxbin:
     threads:
         8
     run:
-        with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
+        with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             out_base = os.path.dirname(output[0])
             if params.maxbin is None:
                 params.maxbin = ''
