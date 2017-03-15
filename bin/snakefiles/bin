@@ -58,10 +58,39 @@ rule bin_run_maxbin:
                     -abund_list {input.abund} {params.maxbin} -thread {threads} 2> {log} 1>&2
                   """)
 
+
+rule summarize_maxbin:
+    input:
+        bin_dir + "{bin_sample}/maxbin/{bin_sample}.summary"
+    output:
+        bin_dir + "{bin_sample}/maxbin/{bin_sample}_maxbin_bins.txt"
+    log:
+        bin_dir + "logs/summarize_maxbin_{bin_sample}.log"
+    benchmark:
+        "benchmarks/bin/summarize_maxbin_{bin_sample}.json"
+    threads:
+        1
+    run:
+        bin_dir = os.path.dirname(input[0])
+        bins = ''
+        for file in os.listdir(bin_dir):
+            if file.endswith(".fasta"):
+                bin = 'Bin_' + str(file.split('.')[-2])
+                with open(file,'r') as f:
+                    for line in f:
+                        if line.strip().startswith('>'):
+                            name = line.strip()[1:]
+                            bins += "{0}\t{1}\n".format(name, bin)
+
+        with open(output[0]) as out:
+            out.write(bins)
+
+
 rule bin_maxbin:
     input:
         expand(bin_dir + "{bin_sample}/maxbin/{bin_sample}.summary",
                bin_sample = config['binning_samples'])
+
 
 rule bin:
     input:

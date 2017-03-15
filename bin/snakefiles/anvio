@@ -172,6 +172,30 @@ rule anvi_merge:
                     scp -r {temp_dir}/SAMPLES_MERGED/* {merge_dir}/.
                   """)
 
+rule anvi_add_maxbin:
+    input:
+        bins = bin_dir + "{bin_sample}/maxbin/{bin_sample}_maxbin_bins.txt",
+        prof = anvio_dir + "{bin_sample}/SAMPLES_MERGED/PROFILE.db",
+        db_done = anvio_dir + "{bin_sample}/{bin_sample}.anvi_gen_contigs_database.done"
+    output:
+        touch(anvio_dir + "{bin_sample}/{bin_sample}.db.anvi_add_maxbin.done")
+    log:
+        anvio_dir + "logs/anvi_add_maxbin.{bin_sample}.log"
+    benchmark:
+        "benchmarks/anvio/anvi_add_maxbin.{bin_sample}.json"
+    run:
+        db = os.path.join(os.path.dirname(input.db_done),wildcards.bin_sample + '.db')
+        shell("""
+                set +u; {ANVIO_ENV}; set -u
+
+                anvi-import-collection -p {input.prof} \
+                -c {db} \
+                -C "MaxBin2" \
+                --contigs-mode \
+                {input.bins}
+              """)
+
+
 rule anvi_summarize:
     input:
         prof=anvio_dir + "{bin_sample}/SAMPLES_MERGED/PROFILE.db",
@@ -197,7 +221,10 @@ rule anvi_summarize:
                     scp -r {temp_dir}/SAMPLES-SUMMARY/* {summary_dir}/.
                   """)
 
+
 rule anvio:
     input:
         expand(anvio_dir + "{bin_sample}/{bin_sample}_SAMPLES-SUMMARY/index.html",
+               bin_sample=config['binning_samples']),
+        expand(anvio_dir + "{bin_sample}/{bin_sample}.db.anvi_add_maxbin.done",
                bin_sample=config['binning_samples'])
