@@ -5,6 +5,7 @@ rule anvi_gen_contigs_database:
         assemble_dir + "{bin_sample}/%s/{bin_sample}.contigs.simple.fa" % config['mapping_assembler']
     output:
         db = anvio_dir + "{bin_sample}/{bin_sample}.db",
+        h5 =  anvio_dir + "{bin_sample}/{bin_sample}.h5",
         done = touch(anvio_dir + "{bin_sample}/{bin_sample}.anvi_gen_contigs_database.done")
     threads:
         4
@@ -15,12 +16,14 @@ rule anvi_gen_contigs_database:
     run:
         with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
             dbname = os.path.basename(output.db)
+            h5name = os.path.basename(output.h5)
             shell("""
                     set +u; {ANVIO_ENV}; set -u
 
                     anvi-gen-contigs-database -f {input} -o {temp_dir}/{dbname} 2> {log} 1>&2
 
                     scp {temp_dir}/{dbname} {output.db}
+                    scp {temp_dir}/{h5name} {output.h5}
                   """)
 
 rule anvi_run_hmms:
@@ -114,7 +117,6 @@ rule anvi_profile:
     output:
         aux=anvio_dir + "{bin_sample}/{bin_sample}.{abund_sample}.bam-ANVIO_PROFILE/AUXILIARY-DATA.h5",
         prof=anvio_dir + "{bin_sample}/{bin_sample}.{abund_sample}.bam-ANVIO_PROFILE/PROFILE.db",
-        info=anvio_dir + "{bin_sample}/{bin_sample}.{abund_sample}.bam-ANVIO_PROFILE/RUNINFO.cp",
         log=anvio_dir + "{bin_sample}/{bin_sample}.{abund_sample}.bam-ANVIO_PROFILE/RUNLOG.txt"
     log:
         anvio_dir + "logs/anvi_profile.{bin_sample}.{abund_sample}.log"
@@ -124,7 +126,8 @@ rule anvi_profile:
     run:
         with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
             prof_dir = os.path.dirname(output.prof)
-            db = os.path.join(os.path.dirname(input.db_done),wildcards.bin_sample + '.db')
+            db_dir = os.path.dirname(input.db_done)
+            db = os.path.join(db_dir,wildcards.bin_sample + '.db')
             shell("""
                     set +u; {ANVIO_ENV}; set -u
 
@@ -132,14 +135,16 @@ rule anvi_profile:
                     --num-threads {threads} --write-buffer-size 2000 \
                     -c {db} \
                     --overwrite-output-destinations \
-                    -o {temp_dir}
+                    -o {temp_dir}/out
 
-                    scp -r {temp_dir} {prof_dir}
+                    scp {temp_dir}/out/* {prof_dir}/.
+
+                    mv out
                   """)
 
 rule anvi_merge:
     input:
-        profiles=lambda wildcards: expand(anvio_dir + "{bin_sample}/{bin_sample}.{abund_sample}.bam-ANVIO_PROFILE/RUNINFO.cp",
+        profiles=lambda wildcards: expand(anvio_dir + "{bin_sample}/{bin_sample}.{abund_sample}.bam-ANVIO_PROFILE/PROFILE.db",
                         bin_sample=wildcards.bin_sample,
                         abund_sample=config['abundance_samples']),
         db_done = anvio_dir + "{bin_sample}/{bin_sample}.anvi_gen_contigs_database.done",
@@ -148,7 +153,8 @@ rule anvi_merge:
     output:        
         aux=anvio_dir + "{bin_sample}/SAMPLES_MERGED/AUXILIARY-DATA.h5",
         prof=anvio_dir + "{bin_sample}/SAMPLES_MERGED/PROFILE.db",
-        info=anvio_dir + "{bin_sample}/SAMPLES_MERGED/RUNINFO.mcp"
+        runlog=anvio_dir + "{bin_sample}/SAMPLES_MERGED/RUNLOG.txt",
+        samps=anvio_dir + "{bin_sample}/SAMPLES_MERGED/SAMPLES.db"
     log:
         anvio_dir + "logs/anvi_merge.{bin_sample}.log"
     benchmark:
@@ -165,7 +171,7 @@ rule anvi_merge:
                     -c {db} \
                     -W
 
-                    scp -r {temp_dir}/SAMPLES_MERGED {merge_dir}
+                    scp -r {temp_dir}/SAMPLES_MERGED/* {merge_dir}/.
                   """)
 
 rule anvi_summarize:
@@ -190,7 +196,7 @@ rule anvi_summarize:
                     -o {temp_dir}/SAMPLES-SUMMARY \
                     -C CONCOCT
 
-                    scp -r {temp_dir}/SAMPLES-SUMMARY {summary_dir}
+                    scp -r {temp_dir}/SAMPLES-SUMMARY/* {summary_dir}/.
                   """)
 
 rule anvio:
