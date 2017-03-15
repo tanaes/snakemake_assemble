@@ -134,7 +134,7 @@ rule anvi_profile:
                     --overwrite-output-destinations \
                     -o {temp_dir}/out
 
-                    scp -r {temp_dir}/out {prof_dir}
+                    scp -r {temp_dir}/out/* {prof_dir}/.
                   """)
 
 rule anvi_merge:
