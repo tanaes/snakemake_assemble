@@ -82,7 +82,7 @@ rule summarize_maxbin:
                             name = line.strip()[1:]
                             bins += "{0}\t{1}\n".format(name, bin)
 
-        with open(output[0]) as out:
+        with open(output[0], 'w') as out:
             out.write(bins)
 
 
