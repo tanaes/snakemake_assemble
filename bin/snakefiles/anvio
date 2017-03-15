@@ -122,7 +122,7 @@ rule anvi_profile:
         anvio_dir + "logs/anvi_profile.{bin_sample}.{abund_sample}.log"
     benchmark:
         "benchmarks/anvio/anvi_profile.{bin_sample}.{abund_sample}.json"
-    threads: 16
+    threads: 8
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             prof_dir = os.path.dirname(output.prof)
