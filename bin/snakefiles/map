@@ -20,7 +20,7 @@ rule map_bowtie2:
         forward = qc_dir + "{abund_sample}/filtered/{abund_sample}.R1.trimmed.filtered.fastq.gz",
         reverse = qc_dir + "{abund_sample}/filtered/{abund_sample}.R2.trimmed.filtered.fastq.gz"
     output:
-        bam = temp(map_dir + "{bin_sample}/mapping/{bin_sample}_{abund_sample}.bam")
+        bam = temp(map_dir + "{bin_sample}/mapping/{bin_sample}_{abund_sample}.bam"),
         bai = temp(map_dir + "{bin_sample}/mapping/{bin_sample}_{abund_sample}.bam.bai")
     log:
         bowtie = map_dir + "logs/bowtie2_map_{bin_sample}_{abund_sample}.bowtie.log",

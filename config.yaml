@@ -2,7 +2,7 @@
 tmp_dir_root: ./
 
 env: source activate snakemake_assemble
-anvi_env: source activate anvio
+anvi_env: source activate sn_anvio
 
 software:
   snakemake_folder: ./
@@ -11,6 +11,10 @@ params:
   skewer: -x ./adapters/HyperPlus.fa -n -l 100 -m any -q 15
   cram:
   maxbin: -plotmarker
+
+resources:
+  centrifuge_base: /home/jgsanders/miniconda/envs/anvio2/centrifuge
+  centrifuge_models: /home/jgsanders/miniconda/envs/anvio2/centrifuge/b+h+v/b+h+v
 
 binning_samples:
   - sample1
