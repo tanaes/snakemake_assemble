@@ -81,8 +81,8 @@
     },
     "anvi_profile": {
         "time" : "4:00:00",
-        "n": 16,
-        "mem": 8
+        "n": 8,
+        "mem": 16
     },
     "anvi_merge": {
         "time" : "8:00:00",
