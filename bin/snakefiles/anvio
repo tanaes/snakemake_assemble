@@ -17,7 +17,7 @@ rule anvi_gen_contigs_database:
             shell("""
                     set +u; {ANVIO_ENV}; set -u
 
-                    anvi-gen-contigs-database -f {input} -o {temp_dir}/{dbname}
+                    anvi-gen-contigs-database -f {input} -o {temp_dir}/{dbname} 2> {log} 1>&2
 
                     scp {temp_dir}/{dbname} {output}
                   """)
@@ -37,7 +37,7 @@ rule anvi_run_hmms:
         shell("""
                 set +u; {ANVIO_ENV}; set -u
 
-                anvi-run-hmms -c {input} --num-threads {threads}
+                anvi-run-hmms -c {input} --num-threads {threads} 2> {log} 1>&2
               """)
 
 rule anvi_export_gene_calls:
@@ -55,7 +55,7 @@ rule anvi_export_gene_calls:
             shell("""
                     set +u; {ANVIO_ENV}; set -u
 
-                    anvi-get-dna-sequences-for-gene-calls -c {input} -o {temp_dir}/{out_name}
+                    anvi-get-dna-sequences-for-gene-calls -c {input} -o {temp_dir}/{out_name} 2> {log} 1>&2
 
                     scp {temp_dir}/{out_name} {output}
                   """)
