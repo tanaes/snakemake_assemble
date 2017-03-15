@@ -4,7 +4,7 @@ rule anvi_gen_contigs_database:
     input:
         assemble_dir + "{bin_sample}/%s/{bin_sample}.contigs.simple.fa" % config['mapping_assembler']
     output:
-        db = anvio_dir + "{bin_sample}/{bin_sample}.db"
+        db = anvio_dir + "{bin_sample}/{bin_sample}.db",
         done = touch(anvio_dir + "{bin_sample}/{bin_sample}.anvi_gen_contigs_database.done")
     threads:
         4
@@ -142,7 +142,7 @@ rule anvi_merge:
         profiles=lambda wildcards: expand(anvio_dir + "{bin_sample}/{bin_sample}.{abund_sample}.bam-ANVIO_PROFILE/RUNINFO.cp",
                         bin_sample=wildcards.bin_sample,
                         abund_sample=config['abundance_samples']),
-        db_done = anvio_dir + "{bin_sample}/{bin_sample}.anvi_gen_contigs_database.done"
+        db_done = anvio_dir + "{bin_sample}/{bin_sample}.anvi_gen_contigs_database.done",
         centrifuge_done=anvio_dir + "{bin_sample}/{bin_sample}.db.added_centrifuge.done",
         hmms_done=anvio_dir + "{bin_sample}/{bin_sample}.db.run-hmms.done"
     output:        
