@@ -30,21 +30,21 @@
     "assemble_metaquast": {
         "time"      : "2:00:00",
         "n"         : 8,
-        "mem"       : 16,
+        "mem"       : 32,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "map_bowtie2_index": {
         "time"      : "2:00:00",
         "n"         : 8,
-        "mem"       : 64,
+        "mem"       : 32,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "map_bowtie2": {
         "time"      : "12:00:00",
         "n"         : 8,
-        "mem"       : 64,
+        "mem"       : 8,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
