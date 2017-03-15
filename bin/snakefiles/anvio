@@ -124,7 +124,7 @@ rule anvi_profile:
     run:
         with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
             prof_dir = os.path.dirname(output.prof)
-            db = os.path.join(os.path.dirname(input[0]),wildcards.bin_sample + '.db')
+            db = os.path.join(os.path.dirname(input.db_done),wildcards.bin_sample + '.db')
             shell("""
                     set +u; {ANVIO_ENV}; set -u
 
@@ -156,7 +156,7 @@ rule anvi_merge:
     run:
         with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
             merge_dir = os.path.dirname(output.prof)
-            db = os.path.join(os.path.dirname(input[0]),wildcards.bin_sample + '.db')
+            db = os.path.join(os.path.dirname(input.db_done),wildcards.bin_sample + '.db')
             shell("""
                     set +u; {ANVIO_ENV}; set -u
 
@@ -181,7 +181,7 @@ rule anvi_summarize:
     run:
         with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
             summary_dir = os.path.dirname(output[0])
-            db = os.path.join(os.path.dirname(input[0]),wildcards.bin_sample + '.db')
+            db = os.path.join(os.path.dirname(input.db_done),wildcards.bin_sample + '.db')
             shell("""
                     set +u; {ANVIO_ENV}; set -u
 
