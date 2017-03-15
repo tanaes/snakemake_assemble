@@ -15,6 +15,10 @@ binning_samples:
   - sample1
   - sample2
 
+abundance_samples:
+  - sample1
+  - sample2
+
 assemblers:
   - megahit
   - metaspades
