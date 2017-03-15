@@ -85,7 +85,7 @@ rule anvi_run_centrifuge:
             report_name = os.path.basename(output.report)
             db_dir = os.path.dirname(input.db_done)
             db = os.path.join(db_dir, wildcards.bin_sample + '.db')
-            db_name = os.path.basename(input.db)
+            db_name = os.path.basename(db)
             shell("""
                     set +u; {ANVIO_ENV}; set -u
 
@@ -132,9 +132,9 @@ rule anvi_profile:
                     --num-threads {threads} --write-buffer-size 2000 \
                     -c {db} \
                     --overwrite-output-destinations \
-                    -o {temp_dir}/out
+                    -o {temp_dir}
 
-                    scp -r {temp_dir}/out/* {prof_dir}/.
+                    scp -r {temp_dir} {prof_dir}
                   """)
 
 rule anvi_merge:
