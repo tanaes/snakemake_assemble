@@ -81,6 +81,7 @@ rule anvi_run_centrifuge:
             hits_name = os.path.basename(output.hits)
             report_name = os.path.basename(output.report)
             db_dir = os.path.dirname(input.db)
+            db_name = os.path.basename(input.db)
             shell("""
                     set +u; {ANVIO_ENV}; set -u
 
@@ -96,7 +97,7 @@ rule anvi_run_centrifuge:
 
                     cd {db_dir}
 
-                    anvi-import-taxonomy -c {input.db} \
+                    anvi-import-taxonomy -c {db_name} \
                     -i centrifuge_report.tsv centrifuge_hits.tsv \
                     -p centrifuge
                   """)
