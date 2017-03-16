@@ -198,27 +198,33 @@ rule anvi_add_maxbin:
 
 rule anvi_summarize:
     input:
-        prof=anvio_dir + "{bin_sample}/SAMPLES_MERGED/PROFILE.db",
+        prof = anvio_dir + "{bin_sample}/SAMPLES_MERGED/PROFILE.db",
         db_done = anvio_dir + "{bin_sample}/{bin_sample}.anvi_gen_contigs_database.done"
     output:
-        anvio_dir + "{bin_sample}/{bin_sample}_SAMPLES-SUMMARY/index.html"
+        tar = anvio_dir + "{wildcards.bin_sample}_samples-summary_CONCOCT.tar.gz",
+        report = anvio_dir + "{wildcards.bin_sample}_samples-summary_CONCOCT.html",
+        txt = anvio_dir + "{wildcards.bin_sample}_samples-summary_CONCOCT.txt"
     log:
         anvio_dir + "logs/anvi_summarize.{bin_sample}.log"
     benchmark:
         "benchmarks/anvio/anvi_summarize.{bin_sample}.json"
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
-            summary_dir = os.path.dirname(output[0])
             db = os.path.join(os.path.dirname(input.db_done),wildcards.bin_sample + '.db')
             shell("""
                     set +u; {ANVIO_ENV}; set -u
 
                     anvi-summarize -p {input.prof} \
                     -c {db} \
-                    -o {temp_dir}/SAMPLES-SUMMARY \
+                    -o {temp_dir}/{wildcards.bin_sample}_samples-summary_CONCOCT \
                     -C CONCOCT
 
-                    scp -r {temp_dir}/SAMPLES-SUMMARY/* {summary_dir}/.
+                    scp {temp_dir}/{wildcards.bin_sample}_samples-summary_CONCOCT/general_bins_summary.txt {output.txt}
+                    scp {temp_dir}/{wildcards.bin_sample}_samples-summary_CONCOCT/index.html {output.report}
+                    
+                    tar -czvf {temp_dir}/{wildcards.bin_sample}_samples-summary_CONCOCT.tar.gz {temp_dir}/{wildcards.bin_sample}_samples-summary_CONCOCT
+
+                    scp {temp_dir}/{wildcards.bin_sample}_samples-summary_CONCOCT.tar.gz {output.tar}
                   """)
 
 
