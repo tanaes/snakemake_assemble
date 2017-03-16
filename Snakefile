@@ -54,7 +54,7 @@ rule all:
         expand(bin_dir + "{bin_sample}/maxbin/{bin_sample}.summary",
                bin_sample=config['binning_samples']),
     # Anvio
-        expand(anvio_dir + "{bin_sample}_samples-summary_CONCOCT.tar.gz",
+        expand(anvio_dir + "{bin_sample}/{bin_sample}_samples-summary_CONCOCT.tar.gz",
                bin_sample=config['binning_samples']),
         expand(anvio_dir + "{bin_sample}/{bin_sample}.db.anvi_add_maxbin.done",
                bin_sample=config['binning_samples'])

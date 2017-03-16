@@ -201,9 +201,9 @@ rule anvi_summarize:
         prof = anvio_dir + "{bin_sample}/SAMPLES_MERGED/PROFILE.db",
         db_done = anvio_dir + "{bin_sample}/{bin_sample}.anvi_gen_contigs_database.done"
     output:
-        tar = anvio_dir + "{bin_sample}_samples-summary_CONCOCT.tar.gz",
-        report = anvio_dir + "{bin_sample}_samples-summary_CONCOCT.html",
-        txt = anvio_dir + "{bin_sample}_samples-summary_CONCOCT.txt"
+        tar = anvio_dir + "{bin_sample}/{bin_sample}_samples-summary_CONCOCT.tar.gz",
+        report = anvio_dir + "{bin_sample}/{bin_sample}_samples-summary_CONCOCT.html",
+        txt = anvio_dir + "{bin_sample}/{bin_sample}_samples-summary_CONCOCT.txt"
     log:
         anvio_dir + "logs/anvi_summarize.{bin_sample}.log"
     benchmark:
@@ -230,7 +230,7 @@ rule anvi_summarize:
 
 rule anvio:
     input:
-        expand(anvio_dir + "{bin_sample}_samples-summary_CONCOCT.tar.gz",
+        expand(anvio_dir + "{bin_sample}/{bin_sample}_samples-summary_CONCOCT.tar.gz",
                bin_sample=config['binning_samples']),
         expand(anvio_dir + "{bin_sample}/{bin_sample}.db.anvi_add_maxbin.done",
                bin_sample=config['binning_samples'])
