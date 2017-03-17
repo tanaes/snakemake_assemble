@@ -20,7 +20,7 @@ rule bin_make_cov_files:
                 fn = os.path.basename(bam).split('.')[0]
                 shell("""
                         samtools view {bam} --threads {threads} -h | \
-                        pileup.sh -Xmx6g out={temp_dir}/{fn}_pileup.txt 2> {log} 1>&2
+                        pileup.sh -Xmx8g out={temp_dir}/{fn}_pileup.txt 2> {log} 1>&2
 
                         awk '{{print $1"\t"$2}}' {temp_dir}/{fn}_pileup.txt | \
                         grep -v '^#' > {temp_dir}/{fn}_abund.txt
