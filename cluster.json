@@ -15,14 +15,14 @@
     },
     "assemble_megahit": {
         "time"      : "12:00:00",
-        "n"         : 24,
+        "n"         : 12,
         "mem"       : 120,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "assemble_metaspades": {
         "time"      : "24:00:00",
-        "n"         : 24,
+        "n"         : 12,
         "mem"       : 120,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
