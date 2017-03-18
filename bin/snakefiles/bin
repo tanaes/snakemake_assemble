@@ -5,7 +5,7 @@ rule bin_make_cov_files:
                abund_sample=config['abundance_samples']),
         ref = assemble_dir + "{bin_sample}/%s/{bin_sample}.contigs.simple.fa" % config['mapping_assembler']
     output:
-        bin_dir + "{bin_sample}/abundance_files/{bin_sample}_abund_list.txt"
+        temp(bin_dir + "{bin_sample}/abundance_files/{bin_sample}_abund_list.txt")
     log:
         bin_dir + "logs/bin_make_cov_files_{bin_sample}.log"
     benchmark:
