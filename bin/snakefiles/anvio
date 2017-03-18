@@ -47,7 +47,8 @@ rule anvi_run_hmms:
 
 rule anvi_export_gene_calls:
     input:
-        anvio_dir + "{bin_sample}/{bin_sample}.anvi_gen_contigs_database.done"
+        anvio_dir + "{bin_sample}/{bin_sample}.anvi_gen_contigs_database.done",
+        anvio_dir + "{bin_sample}/{bin_sample}.db.run-hmms.done"
     output:
         anvio_dir + "{bin_sample}/{bin_sample}.gene-calls.fa"
     log:
@@ -113,7 +114,8 @@ rule anvi_profile:
     input:
         bam = map_dir + "{bin_sample}/mapping/{bin_sample}_{abund_sample}.bam",
         bai = map_dir + "{bin_sample}/mapping/{bin_sample}_{abund_sample}.bam.bai",
-        db_done = anvio_dir + "{bin_sample}/{bin_sample}.anvi_gen_contigs_database.done"
+        db_done = anvio_dir + "{bin_sample}/{bin_sample}.anvi_gen_contigs_database.done",
+        centrifute_done = anvio_dir + "{bin_sample}/{bin_sample}.db.added_centrifuge.done"
     output:
         aux=anvio_dir + "{bin_sample}/{bin_sample}.{abund_sample}.bam-ANVIO_PROFILE/AUXILIARY-DATA.h5",
         prof=anvio_dir + "{bin_sample}/{bin_sample}.{abund_sample}.bam-ANVIO_PROFILE/PROFILE.db",
@@ -131,9 +133,13 @@ rule anvi_profile:
             shell("""
                     set +u; {ANVIO_ENV}; set -u
 
-                    anvi-profile -i {input.bam} \
+                    scp {db} {temp_dir}/{wildcards.bin_sample}.db
+                    scp {input.bam} {temp_dir}/{bin_sample}_{abund_sample}.bam
+                    scp {input.bai} {temp_dir}/{bin_sample}_{abund_sample}.bam.bai
+
+                    anvi-profile -i {temp_dir}/{bin_sample}_{abund_sample}.bam \
                     --num-threads {threads} --write-buffer-size 1000 \
-                    -c {db} \
+                    -c {temp_dir}/{wildcards.bin_sample}.db \
                     --overwrite-output-destinations \
                     -o {temp_dir}/out
 
