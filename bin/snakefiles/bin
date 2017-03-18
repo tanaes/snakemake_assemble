@@ -99,10 +99,9 @@ rule tar_bin_cov_files:
             shell("""
                     scp -r {abund_dir} {temp_dir}/abundance_files
 
-                    cd {temp_dir}
-                    tar -czf abundance_files.tar.gz abundance_files
+                    tar -czvf {temp_dir}/abundance_files.tar.gz  {temp_dir}/abundance_files
 
-                    scp abundance_files.tar.gz {output[0]}
+                    scp  {temp_dir}/abundance_files.tar.gz {output}
 
                     rm -r {abund_dir}
                   """)
