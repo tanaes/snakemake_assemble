@@ -132,7 +132,7 @@ rule anvi_profile:
                     set +u; {ANVIO_ENV}; set -u
 
                     anvi-profile -i {input.bam} \
-                    --num-threads {threads} --write-buffer-size 500 \
+                    --num-threads {threads} --write-buffer-size 1000 \
                     -c {db} \
                     --overwrite-output-destinations \
                     -o {temp_dir}/out
