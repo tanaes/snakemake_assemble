@@ -56,7 +56,7 @@
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "bin_make_cov_files": {
-        "time"      : "1:00:00",
+        "time"      : "8:00:00",
         "n"         : 8,
         "mem"       : 32,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
@@ -80,7 +80,7 @@
         "mem": 32
     },
     "anvi_profile": {
-        "time" : "12:00:00",
+        "time" : "8:00:00",
         "n": 6,
         "mem": 64
     },
