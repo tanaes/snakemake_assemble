@@ -85,16 +85,39 @@ rule summarize_maxbin:
         with open(output[0], 'w') as out:
             out.write(bins)
 
+rule tar_bin_cov_files:
+    input:
+        abund_list = bin_dir + "{bin_sample}/abundance_files/{bin_sample}_abund_list.txt",
+        bin_summary = bin_dir + "{bin_sample}/maxbin/{bin_sample}_maxbin_bins.txt"
+    output:
+        bin_dir + "{bin_sample}/abundance_files.tar.gz"
+    threads:
+        1
+    run:
+        abund_dir = os.path.dirname(input.abund_list)
+        with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
+            shell("""
+                    scp -r {abund_dir} {temp_dir}/abundance_files
+
+                    cd {temp_dir}
+                    tar -czf abundance_files.tar.gz abundance_files
+
+                    scp abundance_files.tar.gz {output[0]}
+
+                    rm -r {abund_dir}
+                  """)
 
 rule bin_maxbin:
     input:
         expand(bin_dir + "{bin_sample}/maxbin/{bin_sample}.summary",
+               bin_sample = config['binning_samples']),
+        expand(bin_dir + "{bin_sample}/abundance_files.tar.gz",
                bin_sample = config['binning_samples'])
 
 
 rule bin:
     input:
-        expand(bin_dir + "{bin_sample}/abundance_files/{bin_sample}_abund_list.txt",
-               bin_sample=config['binning_samples']),
         expand(bin_dir + "{bin_sample}/maxbin/{bin_sample}.summary",
-               bin_sample=config['binning_samples'])
+               bin_sample=config['binning_samples']),
+        expand(bin_dir + "{bin_sample}/abundance_files.tar.gz",
+               bin_sample = config['binning_samples'])

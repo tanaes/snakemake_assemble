@@ -49,10 +49,10 @@ rule all:
         #        sample=samples, bin_sample=config['binning_samples'],
         #        abund_sample=config['abundance_samples']),
     # Binning
-        expand(bin_dir + "{bin_sample}/abundance_files/{bin_sample}_abund_list.txt",
-               bin_sample=config['binning_samples']),
         expand(bin_dir + "{bin_sample}/maxbin/{bin_sample}.summary",
                bin_sample=config['binning_samples']),
+        expand(bin_dir + "{bin_sample}/abundance_files.tar.gz",
+               bin_sample = config['binning_samples']),
     # Anvio
         expand(anvio_dir + "{bin_sample}/{bin_sample}_samples-summary_CONCOCT.tar.gz",
                bin_sample=config['binning_samples']),
