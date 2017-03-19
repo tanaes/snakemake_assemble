@@ -91,7 +91,7 @@
         "error"     : "/dev/null"
     },
     "anvi_profile": {
-        "time" : "4:00:00",
+        "time" : "2:00:00",
         "n": 4,
         "mem": 64,
         "output"    : "/dev/null",
