@@ -94,8 +94,8 @@
         "time" : "8:00:00",
         "n": 4,
         "mem": 64,
-        "output"    : "/dev/null",
-        "error"     : "/dev/null"
+        "output"    : "cluster_logs/{rule}.{wildcards}.out",
+        "error"     : "cluster_logs/{rule}.{wildcards}.out"
     },
     "anvi_merge": {
         "time" : "8:00:00",
