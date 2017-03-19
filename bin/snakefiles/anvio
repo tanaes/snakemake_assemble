@@ -130,18 +130,16 @@ rule anvi_profile:
             prof_dir = os.path.dirname(output.prof)
             db_dir = os.path.dirname(input.db_done)
             db = os.path.join(db_dir,wildcards.bin_sample + '.db')
-            h5 = os.path.join(db_dir,wildcards.bin_sample + '.h5')
             shell("""
                     set +u; {ANVIO_ENV}; set -u
 
-                    scp {db} {temp_dir}/{wildcards.bin_sample}.db
-                    scp {h5} {temp_dir}/{wildcards.bin_sample}.h5
                     scp {input.bam} {temp_dir}/{wildcards.bin_sample}_{wildcards.abund_sample}.bam
                     scp {input.bai} {temp_dir}/{wildcards.bin_sample}_{wildcards.abund_sample}.bam.bai
 
                     anvi-profile -i {temp_dir}/{wildcards.bin_sample}_{wildcards.abund_sample}.bam \
                     --num-threads {threads} --write-buffer-size 1000 \
-                    -c {temp_dir}/{wildcards.bin_sample}.db \
+                    -c {db} \
+                    --skip-SNV-profiling \
                     --overwrite-output-destinations \
                     -o {temp_dir}/out
 
