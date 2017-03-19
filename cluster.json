@@ -91,11 +91,11 @@
         "error"     : "/dev/null"
     },
     "anvi_profile": {
-        "time" : "8:00:00",
+        "time" : "4:00:00",
         "n": 4,
         "mem": 64,
-        "output"    : "cluster_logs/{rule}.{wildcards}.out",
-        "error"     : "cluster_logs/{rule}.{wildcards}.err"
+        "output"    : "/dev/null",
+        "error"     : "/dev/null"
     },
     "anvi_merge": {
         "time" : "8:00:00",
