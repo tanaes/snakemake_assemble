@@ -54,8 +54,10 @@ rule bin_run_maxbin:
             if params.maxbin is None:
                 params.maxbin = ''
             shell("""
-                    run_MaxBin.pl -contig {input.ref} -out {out_base}/{wildcards.bin_sample} \
+                    run_MaxBin.pl -contig {input.ref} -out {temp_dir}/{wildcards.bin_sample} \
                     -abund_list {input.abund} {params.maxbin} -thread {threads} 2> {log} 1>&2
+
+                    scp {temp_dir}/* {out_base}/.
                   """)
 
 
