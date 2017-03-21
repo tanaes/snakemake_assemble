@@ -106,7 +106,7 @@
     },
 
     "anvi_summarize": {
-        "time" : "8:00:00",
+        "time" : "24:00:00",
         "n": 4,
         "mem": 16,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
