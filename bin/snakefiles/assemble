@@ -44,7 +44,7 @@ rule assemble_metaspades:
     params:
         mem=120
     threads:
-        8
+        12
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             outdir = os.path.dirname(output[0])
