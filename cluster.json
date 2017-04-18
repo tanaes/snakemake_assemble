@@ -104,13 +104,24 @@
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
-
     "anvi_summarize": {
         "time" : "24:00:00",
         "n": 4,
         "mem": 16,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
+    },
+    "prodigal": {
+    },
+    "phylophlan": {
+        "time"      : "8:00:00",
+        "n"         : 12,
+        "mem"       : 10
+    },
+    "phylophlan_combined": {
+        "time"      : "24:00:00",
+        "n"         : 24,
+        "mem"       : 20
     }
 }
 
