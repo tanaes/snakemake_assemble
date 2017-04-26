@@ -1,0 +1,313 @@
+
+rule tax_metaphlan2:
+    """
+    Runs MetaPhlan2 on a set of samples to create a joint taxonomic profile for
+    input into HUMAnN2, based on the thinking that it is preferable to have a
+    consistent Chocophlan reference database for the whole set of samples. This
+    is especially true for shallowly sequenced samples. 
+
+    Going to do just R1 reads for now. Because of how I've split PE vs SE
+    processing and naming, still will need to make a separate rule for PE. 
+    """
+    input:
+        forward = qc_dir + "{sample}/filtered/{sample}.R1.trimmed.filtered.fastq.gz",
+        reverse = qc_dir + "{sample}/filtered/{sample}.R2.trimmed.filtered.fastq.gz"
+    output:
+         tax_dir + "{sample}/metaphlan2/{sample}_metaphlan_output.tsv"
+    params:
+        metaphlan_dir = config['params']['metaphlan']["metaphlan_dir"],
+        metaphlan_env = config['metaphlan_env']
+    threads:
+        4
+    log:
+        tax_dir + "logs/tax_metaphlan2.{sample}.log"
+    benchmark:
+        "benchmarks/tax/tax_metaphlan2.{sample}.json"
+    run:
+        with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
+            shell("""
+                  set +u; {metaphlan_env}; set -u
+
+                  zcat {input.forward} {input.reverse} > {temp_dir}/input.fastq
+
+                  {params.metaphlan_dir}/metaphlan2.py {temp_dir}/input.fastq \
+                    --input_type fastq \
+                    --mpa_pkl {params.metaphlan_dir}/db_v20/mpa_v20_m200.pkl \
+                    --bowtie2db {params.metaphlan_dir}/db_v20/mpa_v20_m200 \
+                    --nproc {threads} \
+                    --tmp_dir {temp_dir} \
+                    --no_map \
+                    --input_type fastq > {output}  2> {log}
+                  """)
+
+
+rule tax_combine_metaphlan2:
+    """
+    Combines MetaPhlan2 output for unified taxonomic profile for Humann2.
+    """
+    input:
+        expand(tax_dir + "{sample}/metaphlan2/{sample}_metaphlan_output.tsv",
+               sample=samples)
+    output:
+        joint_prof = tax_dir + "metaphlan2/joined_taxonomic_profile.tsv",
+        max_prof = tax_dir + "metaphlan2/joined_taxonomic_profile_max.tsv"
+    threads:
+        1
+    params:
+        humann2_env = config['humann2_env']
+    log:
+        tax_dir + "logs/tax_combine_metaphlan.log"
+    benchmark:
+        "benchmarks/tax/tax_combine_metaphlan.json"
+    run:
+        with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
+            for file in input:
+                shell("cp {0} {1}/.".format(file, temp_dir))
+            shell("""
+                  set +u; {humann2_env}; set -u
+
+                  humann2_join_tables --input {temp_dir} --output {output.joint_prof} 2> {log} 1>&2
+                  humann2_reduce_table --input {output.joint_prof} \
+                  --output {output.max_prof} --function max --sort-by level 2>> {log} 1>&2
+                  """)
+
+
+rule metaphlan2: 
+    input:
+      tax_dir + "metaphlan2/joined_taxonomic_profile.tsv"
+
+
+rule tax_mash_sketch:
+    """
+    Sketches a trimmed and host-filtered fastq file. 
+    
+    There is almost no documentation for this tool, so it's problematic.
+
+    Relevant parameters might be:
+    -b : use bloom filtering on kmers to reduce impact of low-freq erros.
+    -m N: use explicit depth filtering on kmers (bigger memory impact than bloom)
+    """
+    input:
+        forward = qc_dir + "{sample}/filtered/{sample}.R1.trimmed.filtered.fastq.gz",
+        reverse = qc_dir + "{sample}/filtered/{sample}.R2.trimmed.filtered.fastq.gz"
+    output:
+        tax_dir + "{sample}/mash/{sample}.fna.msh"
+    params:
+        mash = config['software']['mash'],
+        seqtk = config['software']['seqtk'],
+        mash_params = config['params']['mash']['other']
+    threads:
+        1
+    log:
+        tax_dir + "logs/tax_mash_sketch.{sample}.log"
+    benchmark:
+        "benchmarks/tax/tax_mash_sketch.{sample}.json"
+    run:
+        with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
+            output_base = os.path.splitext(output[0])[0]
+            shell("""
+                  {params.seqtk} seq -a {input.forward} > {temp_dir}/R1.fna
+                  {params.seqtk} seq -a {input.reverse} > {temp_dir}/R2.fna
+
+                  cat {temp_dir}/R1.fna {temp_dir}/R2.fna > {temp_dir}/{wildcards.sample}
+
+                  {params.mash} sketch {params.mash_params} -o {output_base} {temp_dir}/{wildcards.sample}
+                  """)
+
+
+rule tax_mash_refseq:
+    """
+    Compares a mash sketch against refseq sketch. 
+
+    Requires that the sketches have same -k values -- for RefSeqDefault, 
+    -k should equal 21. 
+    """
+    input:
+        tax_dir + "{sample}/mash/{sample}.fna.msh"
+    output:
+        tax_dir + "{sample}/mash/{sample}.refseq.txt"
+    params:
+        mash = config['software']['mash'],
+        db = config['params']['mash']['refseq_db']
+    threads:
+        1
+    log:
+        tax_dir + "logs/tax_mash_refseq.{sample}.log"
+    benchmark:
+        "benchmarks/tax/tax_mash_refseq.{sample}.json"
+    run:
+        with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
+            output_base = os.path.basename(output[0])
+            shell("""
+                  {params.mash} dist {params.db} {input} | sort -gk3 > {temp_dir}/{output_base}
+                  scp {temp_dir}/{output_base} {output}
+                  """)
+
+rule tax_mash_dm:
+    """
+    Makes mash distance output file
+    """
+    input:
+        expand(tax_dir + "{sample}/mash/{sample}.fna.msh", sample = samples)
+    output:
+        tax_dir + "mash/mash.dist.txt"
+    params:
+        mash = config['software']['mash']
+    threads:
+        1
+    log:
+        tax_dir + "logs/tax_mash_dm.log"
+    benchmark:
+        "benchmarks/tax/tax_mash_dm.json"
+    run:
+        with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
+            output_base = os.path.basename(output[0])
+            for i in range(len(input)):
+                for j in range(i,len(input)):
+                    thing1 = input[i]
+                    thing2 = input[j]
+                    shell("""
+                          {params.mash} dist {thing1} {thing2} >> {temp_dir}/{output_base}
+
+                          scp {temp_dir}/{output_base} {output}
+                          """)
+
+rule tax_mash_dm_write:
+    """
+    Writes square distance matrices from p values and distances that Mash makes
+    """
+    input:
+        tax_dir + "mash/mash.dist.txt"
+    output:
+        dist_matrix = tax_dir + "mash/mash.dist.dm",
+        p_matrix = tax_dir + "mash/mash.dist.p"
+    threads:
+        1
+    log:
+        tax_dir + "logs/tax_mash_dm_write.log"
+    benchmark:
+        "benchmarks/tax/tax_mash_dm_write.json"
+    run:
+        from skbio.stats.distance import DissimilarityMatrix
+        import pandas as pd
+        import numpy as np
+
+        mash_vec = pd.read_csv(input[0], sep = '\t', header=None)
+
+        # get sorted list of samples
+        samples = sorted(set(mash_vec[0]) | set(mash_vec[1]))
+
+        dm = np.zeros([len(samples),len(samples)])
+        pm = np.zeros([len(samples),len(samples)])
+
+        # fill matrices with values
+        for s1, s2, d, p in zip(mash_vec[0],mash_vec[1],mash_vec[2],mash_vec[3]):
+            i1 = samples.index(s1)
+            i2 = samples.index(s2)
+            print('s1: %s, s2: %s, i1: %s, i2: %s, d: %s, p: %s' % (s1, s2, i1, i2, d, p))
+            dm[i1,i2] = d
+            dm[i2,i1] = d
+            pm[i1,i2] = p
+            pm[i2,i1] = p
+
+        ids = [os.path.basename(x) for x in samples]
+        sk_dm = DissimilarityMatrix(dm, ids=ids)
+        sk_pm = DissimilarityMatrix(pm, ids=ids)
+
+        sk_dm.write(output['dist_matrix'])
+        sk_pm.write(output['p_matrix'])
+
+rule mash:
+    input:
+        dist_matrix = tax_dir + "mash/mash.dist.dm"
+
+
+rule tax_kraken:
+    """
+    Runs Kraken using general defaults.
+    """
+    input:
+        forward = qc_dir + "{sample}/filtered/{sample}.R1.trimmed.filtered.fastq.gz",
+        reverse = qc_dir + "{sample}/filtered/{sample}.R2.trimmed.filtered.fastq.gz"
+    output:
+        map = tax_dir + "{sample}/kraken/{sample}_map.tsv.gz",
+        report = tax_dir + "{sample}/kraken/{sample}_report.txt"
+    params:
+        kraken_db = config['params']['kraken']["kraken_db"]
+    threads:
+        12
+    log:
+        tax_dir + "logs/tax_kraken.{sample}.log"
+    benchmark:
+        "benchmarks/tax/tax_kraken.{sample}.json"
+    run:
+        with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
+            shell("""
+                  set +u; {kraken_env}; set -u
+
+                  kraken {input.forward} {input.reverse} \
+                    --db {params.kraken_db} \
+                    --paired \
+                    --fastq-input \
+                    --gzip-compressed \
+                    --only-classified-output \
+                    --threads {threads} \
+                    1> {temp_dir}/{wildcards.sample}_map.tsv \
+                    2> {log}
+
+                  kraken-report {temp_dir}/{wildcards.sample}_map.tsv \
+                    --db {params.kraken_db} \
+                    1> {temp_dir}/{wildcards.sample}_report.txt \
+                    2>> {log}
+
+                  pigz {temp_dir}/{wildcards.sample}_map.tsv \
+                    -p {threads} \
+                    2>> {log}
+
+                  scp {temp_dir}/{wildcards.sample}_map.tsv.gz {output.map}
+                  scp {temp_dir}/{wildcards.sample}_report.txt {output.report}
+                  """)
+
+
+rule tax_kraken_combine_reports:
+    """
+    Combines the per-sample taxonomic profiles into a single run-wide table. 
+    """
+    input:
+        expand(tax_dir + "{sample}/kraken/{sample}_map.tsv.gz", sample=samples)
+    output:
+        report = tax_dir + "kraken/combined_profile.tsv"
+    params:
+        kraken_db = config['params']['kraken']["kraken_db"]
+    log:
+        tax_dir + "logs/tax_kraken_combine_reports.{sample}.log"
+    benchmark:
+        "benchmarks/tax/tax_kraken_combine_reports.{sample}.json"
+    run:
+        with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
+            for file in input:
+                shell("f=$(basename %s); zcat %s > %s/${{f:0:(${{#f}}-11)}}"
+                      % (file, file, temp_dir))
+            shell("""
+                  set +u; {KRAKEN_ENV}; set -u
+
+                  kraken-mpa-report {temp_dir}/* \
+                    --db {params.kraken_db} \
+                    --header-line \
+                    1> {output.report} \
+                    2> {log}
+                  """)
+
+
+rule kraken:
+    input:
+        tax_dir + "kraken/combined_profile.tsv"
+
+
+rule tax:
+    input:
+        dist_matrix = tax_dir + "mash/mash.dist.dm",
+        tax_dir + "metaphlan2/joined_taxonomic_profile.tsv",
+        tax_dir + "kraken/combined_profile.tsv",
+
+
