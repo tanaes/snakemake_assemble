@@ -52,7 +52,7 @@ rule qc_filter:
         reverse = qc_dir + "{sample}/skewer_trimmed/{sample}.trimmed.R2.fastq.gz"
     output:
         forward = qc_dir + "{sample}/filtered/{sample}.R1.trimmed.filtered.fastq.gz",
-        reverse = qc_dir + "{sample}/filtered/{sample}.R2.trimmed.filtered.fastq.gz",
+        reverse = qc_dir + "{sample}/filtered/{sample}.R2.trimmed.filtered.fastq.gz"
     params:
         filter_db = lambda wildcards: config['samples'][wildcards.sample]['filter_db']
     threads:

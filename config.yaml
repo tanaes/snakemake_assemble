@@ -3,14 +3,27 @@ tmp_dir_root: ./
 
 env: source activate snakemake_assemble
 anvi_env: source activate sn_anvio
+metaphlan_env: source activate humann2
+humann2_env: source activate humann2
+kraken_env: source activate kraken
+shogun_env: source activate shogun
 
 software:
   snakemake_folder: ./
+  mash: 
 
 params:
   skewer: -x ./adapters/HyperPlus.fa -n -l 100 -m any -q 15
   cram:
   maxbin: -plotmarker
+  metaphlan:
+    metaphlan_dir: 
+  mash:
+    other: -r -m 2 -k 21 -s 1000
+    refseq_db: /home/jgsanders/ref_data/mash/RefSeqSketchesDefaults.msh
+  kraken:
+    kraken_db:
+
 
 resources:
   centrifuge_base: /home/jgsanders/miniconda/envs/anvio2/centrifuge
