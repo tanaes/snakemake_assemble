@@ -233,7 +233,8 @@ rule tax_kraken:
         map = tax_dir + "{sample}/kraken/{sample}_map.tsv.gz",
         report = tax_dir + "{sample}/kraken/{sample}_report.txt"
     params:
-        kraken_db = config['params']['kraken']["kraken_db"]
+        kraken_db = config['params']['kraken']['kraken_db'],
+        kraken_env = config['kraken_env']
     threads:
         12
     log:
@@ -278,7 +279,8 @@ rule tax_kraken_combine_reports:
     output:
         report = tax_dir + "kraken/combined_profile.tsv"
     params:
-        kraken_db = config['params']['kraken']["kraken_db"]
+        kraken_db = config['params']['kraken']["kraken_db"],
+        kraken_env = config['kraken_env']
     log:
         tax_dir + "logs/tax_kraken_combine_reports.{sample}.log"
     benchmark:
@@ -289,7 +291,7 @@ rule tax_kraken_combine_reports:
                 shell("f=$(basename %s); zcat %s > %s/${{f:0:(${{#f}}-11)}}"
                       % (file, file, temp_dir))
             shell("""
-                  set +u; {KRAKEN_ENV}; set -u
+                  set +u; {kraken_env}; set -u
 
                   kraken-mpa-report {temp_dir}/* \
                     --db {params.kraken_db} \
@@ -308,6 +310,6 @@ rule tax:
     input:
         dist_matrix = tax_dir + "mash/mash.dist.dm",
         tax_dir + "metaphlan2/joined_taxonomic_profile.tsv",
-        tax_dir + "kraken/combined_profile.tsv",
+        tax_dir + "kraken/combined_profile.tsv"
 
 
