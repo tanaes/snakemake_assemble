@@ -2,12 +2,10 @@
 # $ conda env create -f <this file>
 name: snakemake_assemble
 channels:
-  - conda-forge
-  - defaults
+  - bioconda
   - biocore
   - r
   - anaconda
-  - bioconda
 dependencies:
   - graphviz=2.38.0
   - python=3
@@ -26,6 +24,4 @@ dependencies:
   - bbmap
   - muscle #3.8.31
   - fasttree #2.1.9
-  - prodigal
   - biopython
-  - scipy
