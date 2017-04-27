@@ -21,7 +21,7 @@ rule function_humann2:
         metaphlan_dir = config['params']['humann2']["metaphlan_dir"],
         humann2_nt_db = config['params']['humann2']["humann2_nt_db"],
         humann2_aa_db = config['params']['humann2']["humann2_aa_db"],
-        humann2_eng = config['humann2_env'],
+        humann2_env = config['humann2_env'],
         other = config['params']['humann2']['other']
     threads:
         8
@@ -72,6 +72,8 @@ rule function_humann2_renorm_tables:
         pathabundance = func_dir + "{sample}/humann2/{sample}_pathabundance_{norm}.biom"
     threads:
         1
+    params:
+        humann2_env = config['humann2_env']
     log:
         func_dir + "logs/function_humann2_renorm_tables_{sample}_{norm}.log"
     benchmark:
@@ -114,6 +116,8 @@ rule function_humann2_combine_tables:
         pathabundance = func_dir + "humann2/combined_pathabundance_{norm}_all.biom"
     log:
         func_dir + "logs/function_humann2_combine_tables_{norm}.log"
+    params:
+        humann2_env = config['humann2_env']
     benchmark:
         "benchmarks/function/function_humann2_combine_tables_{norm}.json"
     run:
@@ -160,6 +164,8 @@ rule function_humann2_remove_unmapped:
         pathabundance = func_dir + "humann2/combined_pathabundance_{norm}_mapped.biom"
     threads:
         1
+    params:
+        humann2_env = config['humann2_env']
     log:
         func_dir + "logs/function_humann2_remove_unmapped_{norm}.log"
     benchmark:
@@ -205,6 +211,8 @@ rule function_humann2_split_stratified_tables:
         pathabundance_unstrat = func_dir + "humann2/stratified/combined_pathabundance_{norm}_{mapped}_unstratified.biom"
     threads:
         1
+    params:
+        humann2_env = config['humann2_env']
     log:
         func_dir + "logs/function_humann2_split_stratified_tables_{norm}_{mapped}.log"
     benchmark:
