@@ -10,29 +10,32 @@ print("Samples: ", SAMPLES)
 
 rule phylophlan_all:
     input:
-        expand(bin_dir + "{sample}/phylo/phylo.done", sample = SAMPLES),
-        bin_dir + "combined_phylo/comb_phylo.done"
+        bin_dir + "combined_phylo/comb_phylo.done",
+        expand(bin_dir + "{sample}/phylo/phylo.done", sample = SAMPLES)
 
 rule length_filter:
     input:
-        "{assembly}.fasta"
+        "{path}/%s/{assembly}.fasta" % binner
     output:
-        "{assembly}_{len}K.fasta"
+        "{path}/prodigal/{assembly}_{len}K.fasta"
+    resources:
+        disc = 1
     shell:
-        """contig_length_filter.py {wildcards.len}000 {input} {output}"""
-        #"""python2 contig_length_filter.py {wildcards.len}000 {input} {output}"""
+        """contig_length_filter.py {wildcards.len}000 {input} {wildcards.assembly} {output}"""
 
 rule prodigal:
     input:
-        "{path}/%s/{b}_%dK.fasta" % (binner, config["phylophlan"]["min_length"])
+        "{path}/{b}_%dK.fasta" % config["phylophlan"]["min_length"]
     output:
-        prot = "{path}/prodigal/{b}.faa",
-        gff = "{path}/prodigal/{b}.gff"
+        prot = "{path}/{b}.faa",
+        gff = "{path}/{b}.gff"
         #nuc = "{assembly}.fna",
+    resources:
+        disc = 1
     params:
         g = 11#config["annotation"].get("translation_table", "11")
     log:
-        "{path}.prodigal.log"
+        "{path}/{b}.log"
     shell:
         #-d {output.nuc}
         """prodigal -i {input} -o {output.gff} -f gff -a {output.prot} \
@@ -61,7 +64,7 @@ rule phylophlan:
     log:
         PHYLOPHLAN_DIR+"/output/{sample}/phlan.log"
     shell:
-       """cd {PHYLOPHLAN_DIR} ; python -s phylophlan.py -i -t {wildcards.sample} --nproc {threads} &> {log} ; cd -""" 
+       """cd {PHYLOPHLAN_DIR} ; python2 phylophlan.py -i -t {wildcards.sample} --nproc {threads} &> {log} ; cd -""" 
 
 rule phylophlan_post:
     input:
@@ -78,7 +81,7 @@ rule phylophlan_prep_combined:
     output:
         touch(PHYLOPHLAN_DIR+"/input/combined/comb_prep.done")
     shell:
-        """for d in $(dirname {input}) ; do cp $d/*.faa $(dirname {output}); done"""
+        """for f in {input} ; do cp $(dirname $f)/*.faa $(dirname {output}); done"""
         
 rule phylophlan_combined:
     input:
@@ -90,7 +93,7 @@ rule phylophlan_combined:
     log:
         PHYLOPHLAN_DIR+"/output/combined/phlan.log"
     shell:
-       """cd {PHYLOPHLAN_DIR} ; python -s phylophlan.py -i -t combined --nproc {threads} &> {log} ; cd -""" 
+       """cd {PHYLOPHLAN_DIR} ; python2 phylophlan.py -i -t combined --nproc {threads} &> {log} ; cd -""" 
 
 rule phylophlan_post_combined:
     input:
