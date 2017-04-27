@@ -26,7 +26,7 @@ rule tax_metaphlan2:
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             shell("""
-                  set +u; {metaphlan_env}; set -u
+                  set +u; {params.metaphlan_env}; set -u
 
                   zcat {input.forward} {input.reverse} > {temp_dir}/input.fastq
 
@@ -64,7 +64,7 @@ rule tax_combine_metaphlan2:
             for file in input:
                 shell("cp {0} {1}/.".format(file, temp_dir))
             shell("""
-                  set +u; {humann2_env}; set -u
+                  set +u; {params.humann2_env}; set -u
 
                   humann2_join_tables --input {temp_dir} --output {output.joint_prof} 2> {log} 1>&2
                   humann2_reduce_table --input {output.joint_prof} \
@@ -244,7 +244,7 @@ rule tax_kraken:
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             shell("""
-                  set +u; {kraken_env}; set -u
+                  set +u; {params.kraken_env}; set -u
 
                   kraken {input.forward} {input.reverse} \
                     --db {params.kraken_db} \
@@ -291,7 +291,7 @@ rule tax_kraken_combine_reports:
                 shell("f=$(basename %s); zcat %s > %s/${{f:0:(${{#f}}-11)}}"
                       % (file, file, temp_dir))
             shell("""
-                  set +u; {kraken_env}; set -u
+                  set +u; {params.kraken_env}; set -u
 
                   kraken-mpa-report {temp_dir}/* \
                     --db {params.kraken_db} \
@@ -306,7 +306,7 @@ rule kraken:
         tax_dir + "kraken/combined_profile.tsv"
 
 
-rule tax:
+rule taxonomy:
     input:
         dist_matrix = tax_dir + "mash/mash.dist.dm",
         tax_dir + "metaphlan2/joined_taxonomic_profile.tsv",
