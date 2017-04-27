@@ -308,7 +308,7 @@ rule kraken:
 
 rule taxonomy:
     input:
-        dist_matrix = tax_dir + "mash/mash.dist.dm",
+        tax_dir + "mash/mash.dist.dm",
         tax_dir + "metaphlan2/joined_taxonomic_profile.tsv",
         tax_dir + "kraken/combined_profile.tsv"
 
