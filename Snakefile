@@ -4,8 +4,8 @@ import tempfile
 configfile: "config.yaml"
 localrules: phylophlan_prep, phylophlan_post, phylophlan_prep_combined, phylophlan_post_combined
 
-#ENV = config["env"]
-#shell.prefix("set +u; " + ENV + "; set -u; ")
+ENV = config["env"]
+shell.prefix("set +u; " + ENV + "; set -u; ")
 
 TMP_DIR_ROOT = config['tmp_dir_root']
 
