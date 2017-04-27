@@ -27,6 +27,9 @@ include: snakefiles + "clean"
 include: snakefiles + "test"
 include: snakefiles + "util"
 include: snakefiles + "phylo.snake"
+include: snakefiles + "tax"
+include: snakefiles + "function"
+
 
 rule all:
     # raw
