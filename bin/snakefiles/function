@@ -218,17 +218,18 @@ rule function_humann2_split_stratified_tables:
     benchmark:
         "benchmarks/function/function_humann2_split_stratified_tables_{norm}_{mapped}.json"
     run:
+        out_dir = os.path.dirname(output[0])
         shell("""
               set +u; {params.humann2_env}; set -u
 
               humann2_split_stratified_table --input {input.genefamilies} \
-              --output data/combined_analysis/{wildcards.run}/humann2/stratified 2> {log} 1>&2
+              --output {out_dir} 2> {log} 1>&2
 
               humann2_split_stratified_table --input {input.pathcoverage} \
-              --output data/combined_analysis/{wildcards.run}/humann2/stratified 2>> {log} 1>&2
+              --output {out_dir} 2>> {log} 1>&2
 
               humann2_split_stratified_table --input {input.pathabundance} \
-              --output data/combined_analysis/{wildcards.run}/humann2/stratified 2>> {log} 1>&2
+              --output {out_dir} 2>> {log} 1>&2
               """)
 
 
