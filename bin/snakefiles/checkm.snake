@@ -1,0 +1,38 @@
+
+#---- CheckM stats -------------------------------------------------------------
+CHECKM_ENV = config['checkm_env']
+
+rule checkm_all:
+    input:
+        expand(bin_dir + "{bin_sample}/checkm/checkm.tsv",
+               bin_sample=config['binning_samples'])
+
+rule checkm:
+    input:   "{path}/{bin_sample}/maxbin/{bin_sample}.summary"
+    output:  qa="{path}/{bin_sample}/checkm/qa.tsv", tree_qa="{path}/{bin_sample}/checkm/tree_qa.tsv"
+    params:  in_dir="{path}/{bin_sample}/maxbin", out_dir="{path}/{bin_sample}/checkm"
+    #log:     "{path}/{bin_sample}/checkm/checkm.log"
+    #shell:   "set +u; source activate checkm; set -u \n"
+    shell:   "set +u; {CHECKM_ENV}; set -u \n"
+             "checkm tree -x fasta {params.in_dir} {params.out_dir} \n"
+             "checkm tree_qa -o 2 --tab_table -f {output.tree_qa} {params.out_dir} \n"
+             "checkm lineage_set {params.out_dir} {params.out_dir}/lineage.ms \n"
+             "checkm analyze -x fasta {params.out_dir}/lineage.ms {params.in_dir} {params.out_dir} \n"
+             "checkm qa -o 2 --tab_table -f {output.qa} {params.out_dir}/lineage.ms {params.out_dir} \n"
+             "source deactivate"
+
+import pandas as pd
+
+rule parse_checkm:
+    input:   qa="{path}/qa.tsv", tree_qa="{path}/tree_qa.tsv"
+    output:  "{path}/checkm.tsv"
+    run:
+        table = pd.read_table(input.qa, dtype="str")
+        tree_table = pd.read_table(input.tree_qa, dtype="str", na_filter=False)
+        all_table = pd.merge(table, tree_table, on="Bin Id")
+        res_table = all_table[["Bin Id", "Taxonomy (contained)", "Taxonomy (sister lineage)", "Genome size (Mbp)", "Completeness", "Contamination"]].copy()
+        def extract_taxon(taxonomy):
+            return str(taxonomy).split(";")[-1]
+        for column in ["Taxonomy (contained)", "Taxonomy (sister lineage)"]:
+            res_table[column] = res_table[column].apply(extract_taxon)
+        res_table.to_csv(output[0], index=False, sep="\t")

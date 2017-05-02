@@ -3,15 +3,8 @@ import glob
 PHYLOPHLAN_DIR=config["software"]["phylophlan_folder"]
 binner="maxbin"
 
-#SAMPLES=glob.glob("sample*") #config['binning_samples'])
-SAMPLES=config['binning_samples']
-print("Samples: ", SAMPLES)
-
 rule phylophlan_all:
     input:
-        ### Uncomment to enable phylophlan run for the combined set of bins
-        #bin_dir + "combined_phylo/comb_phylo.done",
-        expand(bin_dir + "{sample}/phylo/phylo.done", sample = SAMPLES)
 
 def bin_names(folder):
     b=[os.path.basename(f)[:-len(".fasta")] for f in glob.glob(folder +  "/*.fasta")]
@@ -49,7 +42,7 @@ rule phylophlan_post:
 #todo reduce code duplication
 rule phylophlan_prep_combined:
     input:
-        expand(PHYLOPHLAN_DIR+"/input/{sample}/prep.done", sample=SAMPLES)
+        expand(PHYLOPHLAN_DIR+"/input/{sample}/prep.done", sample=sample_names)
     output:
         touch(PHYLOPHLAN_DIR+"/input/combined/comb_prep.done")
     shell:

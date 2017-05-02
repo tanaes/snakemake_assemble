@@ -18,6 +18,10 @@ mkdir -p $outdir/cluster_logs
 
 export PATH=$PATH:$(pwd)/bin:$(pwd)/bin/scripts
 
+if [ -d $(pwd)/bin/pplacer ] ; then
+    export PATH=$PATH:$(pwd)/bin/pplacer/
+fi
+
 snakemake -j 4 --resources disc=20 -w 60 --directory "$@" $add_args
 
 ### Use for dry run

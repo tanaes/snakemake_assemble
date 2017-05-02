@@ -20,3 +20,4 @@ fasttree=2.1.9
 prodigal
 biopython
 scipy
+pandas

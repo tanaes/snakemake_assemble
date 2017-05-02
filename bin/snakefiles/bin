@@ -39,7 +39,8 @@ rule bin_run_maxbin:
         abund = bin_dir + "{bin_sample}/abundance_files/{bin_sample}_abund_list.txt",
         ref = assemble_dir + "{bin_sample}/%s/{bin_sample}.contigs.simple.fa" % config['mapping_assembler']
     output: 
-        bin_dir + "{bin_sample}/maxbin/{bin_sample}.summary"
+        #bin_dir + "{bin_sample}/maxbin/{bin_sample}.summary"
+        bin_dir + "{bin_sample}/maxbin/{bin_sample}.marker"
     log:
         bin_dir + "logs/bin_maxbin_{bin_sample}.log"
     benchmark:
