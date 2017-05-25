@@ -23,7 +23,7 @@
     "assemble_metaspades": {
         "time"      : "24:00:00",
         "n"         : 12,
-        "mem"       : 120,
+        "mem"       : 240,
         "output"    : "/dev/null",
         "error"     : "/dev/null"
     },

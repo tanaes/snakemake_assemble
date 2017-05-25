@@ -42,7 +42,7 @@ rule assemble_metaspades:
     benchmark:
         "benchmarks/assemble/metaspades.{sample}.json"
     params:
-        mem=120
+        mem=240
     threads:
         12
     run:
