@@ -9,7 +9,7 @@ rule qc_atropos:
         forward = qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R1.fastq.gz",
         reverse = qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R2.fastq.gz"
     threads:
-        8
+        7
     params:
         atropos = config['params']['atropos']
     log:
@@ -21,7 +21,7 @@ rule qc_atropos:
             f_fp = os.path.basename(output.forward)
             r_fp = os.path.basename(output.reverse)
             shell("""
-                    atropos --threads {threads} {params.atropos} --report-file {log} -o {temp_dir}/{f_fp} -p {temp_dir}/{r_fp} -pe1 {input.forward} -pe2 {input.reverse}
+                    atropos --threads {threads} {params.atropos} --report-file {log} --report-formats txt -o {temp_dir}/{f_fp} -p {temp_dir}/{r_fp} -pe1 {input.forward} -pe2 {input.reverse}
 
                     scp {temp_dir}/{f_fp} {output.forward}
                     scp {temp_dir}/{r_fp} {output.reverse}
