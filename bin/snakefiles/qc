@@ -38,8 +38,8 @@ rule qc_atropos:
         forward = raw_dir + "{sample}/combined_reads/{sample}.R1.fastq.gz",
         reverse = raw_dir + "{sample}/combined_reads/{sample}.R2.fastq.gz"
     output:
-        forward = qc_dir + "{sample}/%s_trimmed/{sample}.trimmed.R1.fastq.gz" % trimmer,
-        reverse = qc_dir + "{sample}/%s_trimmed/{sample}.trimmed.R2.fastq.gz" % trimmer
+        forward = qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R1.fastq.gz",
+        reverse = qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R2.fastq.gz"
     threads:
         4
     params:
@@ -77,8 +77,8 @@ rule qc_filter:
     All piped output first written to localscratch to avoid tying up filesystem.
     """
     input:
-        forward = qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R1.fastq.gz",
-        reverse = qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R2.fastq.gz"
+        forward = qc_dir + "{sample}/%s_trimmed/{sample}.trimmed.R1.fastq.gz" % trimmer,
+        reverse = qc_dir + "{sample}/%s_trimmed/{sample}.trimmed.R2.fastq.gz" % trimmer
     output:
         forward = qc_dir + "{sample}/filtered/{sample}.R1.trimmed.filtered.fastq.gz",
         reverse = qc_dir + "{sample}/filtered/{sample}.R2.trimmed.filtered.fastq.gz"
