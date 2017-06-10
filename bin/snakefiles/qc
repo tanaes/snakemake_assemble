@@ -9,7 +9,7 @@ rule qc_atropos:
         forward = qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R1.fastq.gz",
         reverse = qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R2.fastq.gz"
     threads:
-        4
+        8
     params:
         atropos = config['params']['atropos']
     log:
