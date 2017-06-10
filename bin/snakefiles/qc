@@ -1,35 +1,3 @@
-rule qc_skewer:
-    """
-    Combines multiple input fastqs per sample into a temporary single fastq
-    """
-    input:
-        forward = raw_dir + "{sample}/combined_reads/{sample}.R1.fastq.gz",
-        reverse = raw_dir + "{sample}/combined_reads/{sample}.R2.fastq.gz"
-    output:
-        forward = qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R1.fastq.gz",
-        reverse = qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R2.fastq.gz"
-    threads:
-        4
-    params:
-        skewer = config['params']['skewer']
-    log:
-        qc_dir + "logs/qc_skewer.{sample}.log"
-    benchmark:
-        "benchmarks/qc/qc_skewer.{sample}.json"
-    run:
-        with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
-            shell("""
-                    skewer --threads {threads} {params.skewer} -o {temp_dir}/{wildcards.sample} {input.forward} {input.reverse}
-
-                    pigz -c {temp_dir}/{wildcards.sample}-trimmed-pair1.fastq > {temp_dir}/{wildcards.sample}.trimmed.R1.fastq.gz
-                    pigz -c {temp_dir}/{wildcards.sample}-trimmed-pair2.fastq > {temp_dir}/{wildcards.sample}.trimmed.R2.fastq.gz
-
-                    scp {temp_dir}/{wildcards.sample}.trimmed.R1.fastq.gz {output.forward}
-                    scp {temp_dir}/{wildcards.sample}.trimmed.R2.fastq.gz {output.reverse}
-                    scp {temp_dir}/{wildcards.sample}-trimmed.log {log}
-                  """)
-
-
 rule qc_atropos:
     """
     Does adapter trimming and read QC with Atropos
