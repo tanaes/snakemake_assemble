@@ -6,8 +6,8 @@ rule qc_skewer:
         forward = raw_dir + "{sample}/combined_reads/{sample}.R1.fastq.gz",
         reverse = raw_dir + "{sample}/combined_reads/{sample}.R2.fastq.gz"
     output:
-        forward = qc_dir + "{sample}/skewer_trimmed/{sample}.trimmed.R1.fastq.gz",
-        reverse = qc_dir + "{sample}/skewer_trimmed/{sample}.trimmed.R2.fastq.gz"
+        forward = qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R1.fastq.gz",
+        reverse = qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R2.fastq.gz"
     threads:
         4
     params:
@@ -30,6 +30,35 @@ rule qc_skewer:
                   """)
 
 
+rule qc_atropos:
+    """
+    Does adapter trimming and read QC with Atropos
+    """
+    input:
+        forward = raw_dir + "{sample}/combined_reads/{sample}.R1.fastq.gz",
+        reverse = raw_dir + "{sample}/combined_reads/{sample}.R2.fastq.gz"
+    output:
+        forward = qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R1.fastq.gz",
+        reverse = qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R2.fastq.gz"
+    threads:
+        4
+    params:
+        atropos = config['params']['atropos']
+    log:
+        qc_dir + "logs/qc_atropos.{sample}.log"
+    benchmark:
+        "benchmarks/qc/qc_atropos.{sample}.json"
+    run:
+        with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
+            f_fp = os.path.basename(output.forward)
+            r_fp = os.path.basename(output.reverse)
+            shell("""
+                    atropos --threads {threads} {params.atropos} --report-file {log} -o {temp_dir}/{f_fp} -p {temp_dir}/{r_fp} -pe1 {input.forward} -pe2 {input.reverse}
+
+                    scp {temp_dir}/{f_fp} {output.forward}
+                    scp {temp_dir}/{r_fp} {output.reverse}
+                  """)
+
 rule qc_filter:
     """
     Performs host read filtering on paired end data using Bowtie and Samtools/
@@ -48,8 +77,8 @@ rule qc_filter:
     All piped output first written to localscratch to avoid tying up filesystem.
     """
     input:
-        forward = qc_dir + "{sample}/skewer_trimmed/{sample}.trimmed.R1.fastq.gz",
-        reverse = qc_dir + "{sample}/skewer_trimmed/{sample}.trimmed.R2.fastq.gz"
+        forward = qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R1.fastq.gz",
+        reverse = qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R2.fastq.gz"
     output:
         forward = qc_dir + "{sample}/filtered/{sample}.R1.trimmed.filtered.fastq.gz",
         reverse = qc_dir + "{sample}/filtered/{sample}.R2.trimmed.filtered.fastq.gz"
@@ -131,8 +160,8 @@ rule qc_per_sample_multiqc:
 
 rule qc:
     input:
-        expand(qc_dir + "{sample}/skewer_trimmed/{sample}.trimmed.R1.fastq.gz", sample=samples),
-        expand(qc_dir + "{sample}/skewer_trimmed/{sample}.trimmed.R2.fastq.gz", sample=samples),
+        expand(qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R1.fastq.gz", sample=samples, trimmer=trimmer),
+        expand(qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R2.fastq.gz", sample=samples, trimmer=trimmer),
         expand(qc_dir + "{sample}/filtered/{sample}.R1.trimmed.filtered.fastq.gz", sample=samples),
         expand(qc_dir + "{sample}/filtered/{sample}.R2.trimmed.filtered.fastq.gz", sample=samples),
         qc_dir + "multiQC_per_sample/multiqc_report.html"
