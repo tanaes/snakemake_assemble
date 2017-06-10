@@ -38,8 +38,8 @@ rule qc_atropos:
         forward = raw_dir + "{sample}/combined_reads/{sample}.R1.fastq.gz",
         reverse = raw_dir + "{sample}/combined_reads/{sample}.R2.fastq.gz"
     output:
-        forward = qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R1.fastq.gz",
-        reverse = qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R2.fastq.gz"
+        forward = qc_dir + "{sample}/%s_trimmed/{sample}.trimmed.R1.fastq.gz" % trimmer,
+        reverse = qc_dir + "{sample}/%s_trimmed/{sample}.trimmed.R2.fastq.gz" % trimmer
     threads:
         4
     params:
