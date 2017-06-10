@@ -34,8 +34,8 @@ rule all:
     input:
         # expand(data_dir + "{sample}/{sample}_links.done", sample=samples),
     # QC
-        expand(qc_dir + "{sample}/skewer_trimmed/{sample}.trimmed.R1.fastq.gz", sample=samples),
-        expand(qc_dir + "{sample}/skewer_trimmed/{sample}.trimmed.R2.fastq.gz", sample=samples),
+        expand(qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R1.fastq.gz", sample=samples, trimmer=trimmer),
+        expand(qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R2.fastq.gz", sample=samples, trimmer=trimmer),
         expand(qc_dir + "{sample}/filtered/{sample}.R1.trimmed.filtered.fastq.gz", sample=samples),
         expand(qc_dir + "{sample}/filtered/{sample}.R2.trimmed.filtered.fastq.gz", sample=samples),
         qc_dir + "multiQC_per_sample/multiqc_report.html",
