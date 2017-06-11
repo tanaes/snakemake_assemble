@@ -95,7 +95,7 @@ rule assemble_metaquast:
                                  assembler = config['assemblers'],
                                  sample = wildcards.sample)
     output:
-        assemble_dir + "{sample}/metaquast.tar.gz"
+        assemble_dir + "{sample}/metaquast/report.html"
     log:
         assemble_dir + "logs/metaquast_{sample}.log"
     threads:
@@ -104,15 +104,13 @@ rule assemble_metaquast:
         "benchmarks/assemble/metaquast.{sample}.json"
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
-
+            outdir = os.path.dirname(output[0])
             assemblies = ' '.join(input)
             shell("""
                     metaquast.py -t {threads} -o {temp_dir}/metaquast \
                     {assemblies} 2> {log} 1>&2
 
-                    tar -czvf {temp_dir}/metaquast.tar.gz {temp_dir}/metaquast
-
-                    scp {temp_dir}/metaquast.tar.gz {output}
+                    scp -r {temp_dir}/metaquast {outdir}/metaquast
                   """)
 
 
@@ -122,7 +120,7 @@ rule assemble_quast:
                                  assembler = config['assemblers'],
                                  sample = wildcards.sample)
     output:
-        assemble_dir + "{sample}/quast.tar.gz"
+        assemble_dir + "{sample}/quast/report.tsv"
     log:
         assemble_dir + "logs/quast_{sample}.log"
     threads:
@@ -131,15 +129,13 @@ rule assemble_quast:
         "benchmarks/assemble/quast.{sample}.json"
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
-
+            outdir = os.path.dirname(output[0])
             assemblies = ' '.join(input)
             shell("""
                     quast.py -t {threads} -o {temp_dir}/quast \
                     {assemblies} 2> {log} 1>&2
 
-                    tar -czvf {temp_dir}/quast.tar.gz {temp_dir}/quast
-
-                    scp {temp_dir}/quast.tar.gz {output}
+                    scp -r {temp_dir}/quast {outdir}/quast
                   """)
 
 
@@ -161,11 +157,29 @@ rule assemble_simplify_fasta_headers:
                          output_fp=output.fasta, header_fp=output.headers)
 
 
+rule assemble_per_sample_multiqc:
+    """
+    Runs multiqc for combined input files.
+    """
+    input:
+        expand(assemble_dir + "{sample}/quast/report.tsv", sample=samples),
+    output:
+        assemble_dir + "multiQC_per_sample/multiqc_report.html"
+    threads:
+        4
+    log:
+        qc_dir + "logs/assemble_per_sample_multiqc.log"
+    run:
+        out_dir = os.path.dirname(output[0])
+        shell("multiqc -f -o {out_dir} {input} 2> {log} 1>&2")
+
+
 rule assemble:
     input:
         expand(assemble_dir + "{sample}/{assembler}/{sample}.contigs.fa",
                sample=samples, assembler=config['assemblers']),
-        expand(assemble_dir + "{sample}/metaquast.tar.gz",
+        expand(assemble_dir + "{sample}/metaquast/report.html",
                sample=samples),
-        expand(assemble_dir + "{sample}/quast.tar.gz",
-               sample=samples)
+        expand(assemble_dir + "{sample}/quast/report.tsv",
+               sample=samples),
+        assemble_dir + "multiQC_per_sample/multiqc_report.html"
