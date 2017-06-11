@@ -32,7 +32,8 @@ include: snakefiles + "util"
 rule all:
     # raw
     input:
-        # expand(data_dir + "{sample}/{sample}_links.done", sample=samples),
+        raw_dir + "multiQC_per_file/multiqc_report.html",
+        raw_dir + "multiQC_per_sample/multiqc_report.html",
     # QC
         expand(qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R1.fastq.gz", sample=samples, trimmer=trimmer),
         expand(qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R2.fastq.gz", sample=samples, trimmer=trimmer),

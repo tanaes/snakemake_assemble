@@ -121,7 +121,6 @@ rule raw:
     Top-level rule to do raw read prep
     """
     input:
-        expand(data_dir + "{sample}/{sample}_links.done", sample=samples),
         raw_dir + "multiQC_per_file/multiqc_report.html",
         raw_dir + "multiQC_per_sample/multiqc_report.html"
 
