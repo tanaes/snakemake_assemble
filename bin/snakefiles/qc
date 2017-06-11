@@ -95,7 +95,6 @@ rule qc_per_sample_fastqc:
         forward = qc_dir + "{sample}/filtered/{sample}.R1.trimmed.filtered.fastq.gz",
         reverse = qc_dir + "{sample}/filtered/{sample}.R2.trimmed.filtered.fastq.gz"
     output:
-        touch(qc_dir + "{sample}/fastqc_per_sample/{sample}.done"),
         html = qc_dir + "{sample}/fastqc_per_sample/{sample}.R1.trimmed.filtered_fastqc.html",
         zip = qc_dir + "{sample}/fastqc_per_sample/{sample}.R2.trimmed.filtered_fastqc.zip"
     threads:
@@ -114,7 +113,7 @@ rule qc_per_sample_multiqc:
     Runs multiqc for combined input files.
     """
     input:
-        expand(qc_dir + "{sample}/fastqc_per_sample/{sample}.done", sample=samples),
+        expand(qc_dir + "{sample}/fastqc_per_sample/{sample}.R2.trimmed.filtered_fastqc.zip", sample=samples),
     output:
         qc_dir + "multiQC_per_sample/multiqc_report.html"
     threads:

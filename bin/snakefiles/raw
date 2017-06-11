@@ -28,7 +28,7 @@ rule raw_per_file_fastqc:
         forward = lambda wildcards: config["samples"][wildcards.sample]["forward"],
         reverse = lambda wildcards: config["samples"][wildcards.sample]["reverse"]
     output:
-        touch(raw_dir + "{sample}/fastqc_per_file/{sample}.done")
+        raw_dir + "{sample}/fastqc_per_file/{sample}.R2_fastqc.zip"
     threads:
         4
     log:
@@ -44,7 +44,7 @@ rule raw_per_file_multiqc:
     Runs multiqc for set of individual input files.
     """
     input:
-        expand(raw_dir + "{sample}/fastqc_per_file/{sample}.done", sample=config['samples'])
+        expand(raw_dir + "{sample}/fastqc_per_file/{sample}.R2_fastqc.zip", sample=config['samples'])
     output:
         raw_dir + "multiQC_per_file/multiqc_report.html"
     threads:
