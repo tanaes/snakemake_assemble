@@ -95,7 +95,7 @@ rule assemble_metaquast:
                                  assembler = config['assemblers'],
                                  sample = wildcards.sample)
     output:
-        assemble_dir + "{sample}/metaquast/report.html"
+        assemble_dir + "{sample}/metaquast/metaquast.log"
     log:
         assemble_dir + "logs/metaquast_{sample}.log"
     threads:
@@ -178,7 +178,7 @@ rule assemble:
     input:
         expand(assemble_dir + "{sample}/{assembler}/{sample}.contigs.fa",
                sample=samples, assembler=config['assemblers']),
-        expand(assemble_dir + "{sample}/metaquast/report.html",
+        expand(assemble_dir + "{sample}/metaquast/metaquast.log",
                sample=samples),
         expand(assemble_dir + "{sample}/quast/report.tsv",
                sample=samples),
