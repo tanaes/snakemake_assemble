@@ -95,7 +95,7 @@ rule assemble_metaquast:
                                  assembler = config['assemblers'],
                                  sample = wildcards.sample)
     output:
-        assemble_dir + "{sample}/metaquast/metaquast.log"
+        done = assemble_dir + "{sample}/metaquast/{sample}.metaquast.done"
     log:
         assemble_dir + "logs/metaquast_{sample}.log"
     threads:
@@ -104,13 +104,15 @@ rule assemble_metaquast:
         "benchmarks/assemble/metaquast.{sample}.json"
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
-            outdir = os.path.dirname(output[0])
+            outdir = os.path.dirname(output.done)
             assemblies = ' '.join(input)
             shell("""
                     metaquast.py -t {threads} -o {temp_dir}/metaquast \
                     {assemblies} 2> {log} 1>&2
 
                     scp -r {temp_dir}/metaquast/* {outdir}/.
+
+                    touch {output.done}
                   """)
 
 
@@ -120,7 +122,7 @@ rule assemble_quast:
                                  assembler = config['assemblers'],
                                  sample = wildcards.sample)
     output:
-        assemble_dir + "{sample}/quast/report.tsv"
+        done = assemble_dir + "{sample}/quast/{sample}.quast.done"
     log:
         assemble_dir + "logs/quast_{sample}.log"
     threads:
@@ -129,13 +131,15 @@ rule assemble_quast:
         "benchmarks/assemble/quast.{sample}.json"
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
-            outdir = os.path.dirname(output[0])
+            outdir = os.path.dirname(output.done)
             assemblies = ' '.join(input)
             shell("""
                     quast.py -t {threads} -o {temp_dir}/quast \
                     {assemblies} 2> {log} 1>&2
 
                     scp -r {temp_dir}/quast/* {outdir}/.
+
+                    touch {output.done}
                   """)
 
 
@@ -162,7 +166,7 @@ rule assemble_per_sample_multiqc:
     Runs multiqc for combined input files.
     """
     input:
-        expand(assemble_dir + "{sample}/quast/report.tsv", sample=samples),
+        expand(assemble_dir + "{sample}/quast/{sample}.quast.done", sample=samples),
     output:
         assemble_dir + "multiQC_per_sample/multiqc_report.html"
     threads:
@@ -171,15 +175,15 @@ rule assemble_per_sample_multiqc:
         qc_dir + "logs/assemble_per_sample_multiqc.log"
     run:
         out_dir = os.path.dirname(output[0])
-        shell("multiqc -f -o {out_dir} {input} 2> {log} 1>&2")
+        shell("multiqc -f -o {out_dir} {assemble_dir}/*/quast/report.tsv 2> {log} 1>&2")
 
 
 rule assemble:
     input:
         expand(assemble_dir + "{sample}/{assembler}/{sample}.contigs.fa",
                sample=samples, assembler=config['assemblers']),
-        expand(assemble_dir + "{sample}/metaquast/metaquast.log",
+        expand(assemble_dir + "{sample}/metaquast/{sample}.metaquast.done",
                sample=samples),
-        expand(assemble_dir + "{sample}/quast/report.tsv",
+        expand(assemble_dir + "{sample}/quast/{sample}.quast.done",
                sample=samples),
         assemble_dir + "multiQC_per_sample/multiqc_report.html"
