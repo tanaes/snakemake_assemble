@@ -3,6 +3,7 @@ tmp_dir_root: ./
 
 env: source activate snakemake_assemble
 anvi_env: source activate sn_anvio
+checkm_env: source activate checkm
 metaphlan_env: source activate humann2
 humann2_env: source activate humann2
 kraken_env: source activate kraken

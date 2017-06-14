@@ -4,21 +4,21 @@ CHECKM_ENV = config['checkm_env']
 
 rule checkm_all:
     input:
-        expand(bin_dir + "{bin_sample}/checkm/checkm.tsv",
-               bin_sample=config['binning_samples'])
+        expand(bin_dir + "{bin}/checkm/checkm.tsv",
+               bin=config['binning_samples'])
 
 rule checkm:
-    input:   "{path}/{bin_sample}/maxbin/{bin_sample}.summary"
-    output:  qa="{path}/{bin_sample}/checkm/qa.tsv", tree_qa="{path}/{bin_sample}/checkm/tree_qa.tsv"
-    params:  in_dir="{path}/{bin_sample}/maxbin", out_dir="{path}/{bin_sample}/checkm"
-    #log:     "{path}/{bin_sample}/checkm/checkm.log"
-    #shell:   "set +u; source activate checkm; set -u \n"
+    input:   "{path}/{bin}/maxbin/{bin}.summary"
+    output:  qa="{path}/{bin}/checkm/qa.tsv", tree_qa="{path}/{bin}/checkm/tree_qa.tsv"
+    params:  in_dir="{path}/{bin}/maxbin", out_dir="{path}/{bin}/checkm"
+    log:     "{path}/{bin}/checkm/checkm.log"
+    #TODO use already called genes
     shell:   "set +u; {CHECKM_ENV}; set -u \n"
-             "checkm tree -x fasta {params.in_dir} {params.out_dir} \n"
-             "checkm tree_qa -o 2 --tab_table -f {output.tree_qa} {params.out_dir} \n"
-             "checkm lineage_set {params.out_dir} {params.out_dir}/lineage.ms \n"
-             "checkm analyze -x fasta {params.out_dir}/lineage.ms {params.in_dir} {params.out_dir} \n"
-             "checkm qa -o 2 --tab_table -f {output.qa} {params.out_dir}/lineage.ms {params.out_dir} \n"
+             "checkm tree -x fasta {params.in_dir} {params.out_dir} &> {log} \n"
+             "checkm tree_qa -o 2 --tab_table -f {output.tree_qa} {params.out_dir} &> {log} \n"
+             "checkm lineage_set {params.out_dir} {params.out_dir}/lineage.ms &> {log} \n"
+             "checkm analyze -x fasta {params.out_dir}/lineage.ms {params.in_dir} {params.out_dir} &> {log} \n"
+             "checkm qa -o 2 --tab_table -f {output.qa} {params.out_dir}/lineage.ms {params.out_dir} &> {log} \n"
              "source deactivate"
 
 import pandas as pd
