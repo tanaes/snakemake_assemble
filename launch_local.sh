@@ -5,9 +5,20 @@ if [ "$#" -lt 1 ]; then
     exit
 fi
 
+add_args=""
+if [ "$#" -lt 2 ]; then
+    add_args="all"
+    #TODO solve the problem with two-step pipeline run
+    #add_args="all phylophlan_all"
+fi
+
 outdir=$1
 
 mkdir -p $outdir/cluster_logs
 
-snakemake -j 16 --local-cores 4 -w 90 --cluster-config cluster.json --cluster "touch {cluster.output}; " --directory "$@"
+export PATH=$PATH:$(pwd)/bin:$(pwd)/bin/scripts
 
+snakemake -j 4 --resources disc=20 -w 60 --directory "$@" $add_args
+
+### Use for dry run
+#snakemake -j 1 -n -r --directory "$@" $add_args

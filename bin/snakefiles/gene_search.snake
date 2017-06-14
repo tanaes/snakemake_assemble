@@ -1,0 +1,27 @@
+rule length_filter:
+    input:
+        "{path}/%s/{assembly}.fasta" % binner
+    output:
+        "{path}/prodigal/{assembly}_{len}K.fasta"
+    resources:
+        disc = 1
+    shell:
+        """contig_length_filter.py {wildcards.len}000 {input} {output} {wildcards.assembly}"""
+
+rule prodigal:
+    input:
+        "{path}/{b}_%dK.fasta" % config["gene_search"]["min_length"]
+    output:
+        #nuc = "{assembly}.fna",
+        prot = "{path}/{b}.faa",
+        gff = "{path}/{b}.gff"
+    resources:
+        disc = 1
+    params:
+        g = 11 #config["annotation"].get("translation_table", "11")
+    log:
+        "{path}/{b}.log"
+    shell:
+        """prodigal -i {input} -o {output.gff} -f gff -a {output.prot} \
+               -g {params.g} -p meta &> {log}""" #-d {output.nuc}
+

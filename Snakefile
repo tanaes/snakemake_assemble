@@ -4,7 +4,6 @@ import tempfile
 configfile: "config.yaml"
 
 ENV = config["env"]
-
 shell.prefix("set +u; " + ENV + "; set -u; ")
 
 TMP_DIR_ROOT = config['tmp_dir_root']
@@ -26,6 +25,10 @@ include: snakefiles + "anvio"
 include: snakefiles + "clean"
 include: snakefiles + "test"
 include: snakefiles + "util"
+include: snakefiles + "gene_search.snake"
+include: snakefiles + "phylo.snake"
+
+localrules: phylophlan_prep, phylophlan_post, phylophlan_prep_combined, phylophlan_post_combined
 
 rule all:
     # raw
