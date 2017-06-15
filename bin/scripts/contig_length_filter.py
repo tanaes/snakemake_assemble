@@ -10,12 +10,12 @@ if len(sys.argv) < 4:
 
 f_n = sys.argv[2]
 suffix = ""
-if len(sys.argv) >= 4:
-    suffix = "_" + sys.argv[3]
+if len(sys.argv) >= 5:
+    suffix = "_" + sys.argv[4]
 
 input_seq_iterator = SeqIO.parse(open(f_n, "r"), "fasta")
 
-output_handle = open(sys.argv[4], "w")
+output_handle = open(sys.argv[3], "w")
 #(record.name + suffix).replace(".", "_")
 SeqIO.write((SeqRecord(record.seq, record.name + suffix, "","") for record in input_seq_iterator \
                 if len(record.seq) >= int(sys.argv[1])), output_handle, "fasta")
