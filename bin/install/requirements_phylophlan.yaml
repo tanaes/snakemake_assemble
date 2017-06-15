@@ -1,0 +1,9 @@
+# This file may be used to create an environment using:
+# $ conda env create -f <this file>
+name: phylophlan
+dependencies:
+  - python=2
+  - muscle=3.8.31
+  - fasttree=2.1.9
+  - biopython
+  - scipy

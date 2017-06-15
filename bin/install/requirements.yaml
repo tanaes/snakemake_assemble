@@ -24,9 +24,6 @@ dependencies:
   - spades
   - maxbin2
   - bbmap
-  - muscle #3.8.31
-  - fasttree #2.1.9
   - prodigal
   - biopython
-  - scipy
   - pandas

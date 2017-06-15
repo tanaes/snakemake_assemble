@@ -1,6 +1,7 @@
 import glob
 
 PHYLOPHLAN_DIR=config["software"]["phylophlan_folder"]
+PHYLOPHLAN_ENV = config['phylophlan_env']
 binner="maxbin"
 
 rule phylophlan_all:
@@ -29,7 +30,8 @@ rule phylophlan:
     log:
         PHYLOPHLAN_DIR+"/output/{sample}/phlan.log"
     shell:
-       """cd {PHYLOPHLAN_DIR} ; python2 phylophlan.py -i -t {wildcards.sample} --nproc {threads} &> {log} ; cd -""" 
+       """set +u; {PHYLOPHLAN_ENV}; set -u \n"""
+       """cd {PHYLOPHLAN_DIR} ; python phylophlan.py -i -t {wildcards.sample} --nproc {threads} &> {log} ; cd -""" 
 
 rule phylophlan_post:
     input:
@@ -58,7 +60,8 @@ rule phylophlan_combined:
     log:
         PHYLOPHLAN_DIR+"/output/combined/phlan.log"
     shell:
-       """cd {PHYLOPHLAN_DIR} ; python2 phylophlan.py -i -t combined --nproc {threads} &> {log} ; cd -""" 
+       """set +u; {PHYLOPHLAN_ENV}; set -u \n"""
+       """cd {PHYLOPHLAN_DIR} ; python phylophlan.py -i -t combined --nproc {threads} &> {log} ; cd -""" 
 
 rule phylophlan_post_combined:
     input:
