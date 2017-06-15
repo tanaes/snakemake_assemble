@@ -21,12 +21,11 @@ rule checkm:
              "checkm qa -o 2 --tab_table -f {output.qa} {params.out_dir}/lineage.ms {params.out_dir} &> {log} \n"
              "source deactivate"
 
-import pandas as pd
-
 rule parse_checkm:
     input:   qa="{path}/qa.tsv", tree_qa="{path}/tree_qa.tsv"
     output:  "{path}/checkm.tsv"
     run:
+        import pandas as pd
         table = pd.read_table(input.qa, dtype="str")
         tree_table = pd.read_table(input.tree_qa, dtype="str", na_filter=False)
         all_table = pd.merge(table, tree_table, on="Bin Id")
