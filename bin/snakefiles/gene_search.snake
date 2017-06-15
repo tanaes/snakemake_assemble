@@ -1,12 +1,14 @@
 rule length_filter:
     input:
-        "{path}/%s/{assembly}.fasta" % binner
+        "{path}/maxbin/{assembly}.fasta"
     output:
         "{path}/prodigal/{assembly}_{len}K.fasta"
     resources:
         disc = 1
+    log:
+        "{path}/prodigal/{assembly}_{len}K_filter.log"
     shell:
-        """contig_length_filter.py {wildcards.len}000 {input} {output} {wildcards.assembly}"""
+        """contig_length_filter.py {wildcards.len}000 {input} {output} {wildcards.assembly} &> {log}"""
 
 rule prodigal:
     input:
