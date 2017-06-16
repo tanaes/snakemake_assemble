@@ -1,3 +1,16 @@
+def bin_names(folder):
+    b=[os.path.basename(f)[:-len(".fasta")] for f in glob.glob(folder +  "/*.fasta")]
+    print("Bins in folder ", folder , " ", b)
+    return b
+
+binner="maxbin"
+rule genes_sample:
+    input:
+        bin_dir + "{sample}/maxbin/{sample}.summary",
+        lambda wc: expand(bin_dir + wc.sample + "/prodigal/{b}.faa", b=bin_names(bin_dir + wc.sample + "/" + binner))
+    output:
+        touch(bin_dir + "{sample}/prodigal/prodigal.done")
+
 rule length_filter:
     input:
         "{path}/maxbin/{assembly}.fasta"
