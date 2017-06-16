@@ -104,6 +104,12 @@
         "queue"     : "-q longmem",
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
+    },
+    "checkm": {
+        "time"      : "8:00:00",
+        "n"         : 8,
+        "mem"       : 60,
+        "queue"     : "-q medmem"
     }
 }
 
