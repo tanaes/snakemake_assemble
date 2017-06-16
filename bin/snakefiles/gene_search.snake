@@ -1,0 +1,42 @@
+def bin_names(folder):
+    b=[os.path.basename(f)[:-len(".fasta")] for f in glob.glob(folder +  "/*.fasta")]
+    print("Bins in folder ", folder , " ", b)
+    return b
+
+binner="maxbin"
+rule genes_sample:
+    input:
+        bin_dir + "{sample}/maxbin/{sample}.summary",
+        lambda wc: expand(bin_dir + wc.sample + "/prodigal/{b}.faa", b=bin_names(bin_dir + wc.sample + "/" + binner))
+    output:
+        touch(bin_dir + "{sample}/prodigal/prodigal.done")
+
+rule length_filter:
+    input:
+        "{path}/maxbin/{assembly}.fasta"
+    output:
+        "{path}/prodigal/{assembly}_{len}K.fasta"
+    resources:
+        disc = 1
+    log:
+        "{path}/prodigal/{assembly}_{len}K_filter.log"
+    shell:
+        """contig_length_filter.py {wildcards.len}000 {input} {output} {wildcards.assembly} &> {log}"""
+
+rule prodigal:
+    input:
+        "{path}/{b}_%dK.fasta" % config["gene_search"]["min_length"]
+    output:
+        #nuc = "{assembly}.fna",
+        prot = "{path}/{b}.faa",
+        gff = "{path}/{b}.gff"
+    resources:
+        disc = 1
+    params:
+        g = 11 #config["annotation"].get("translation_table", "11")
+    log:
+        "{path}/{b}.log"
+    shell:
+        """prodigal -i {input} -o {output.gff} -f gff -a {output.prot} \
+               -g {params.g} -p meta &> {log}""" #-d {output.nuc}
+

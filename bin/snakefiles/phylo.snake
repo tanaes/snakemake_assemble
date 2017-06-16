@@ -1,0 +1,76 @@
+import glob
+
+PHYLOPHLAN_DIR=config["software"]["phylophlan_folder"]
+PHYLOPHLAN_ENV = config['phylophlan_env']
+ 
+rule phylophlan_prep:
+    input:
+        bin_dir + "{sample}/prodigal/prodigal.done"
+    output:
+        touch(bin_dir + "{sample}/phylo/prep.done")
+    shell:
+        """mkdir -p {PHYLOPHLAN_DIR}/input/{wildcards.sample} \n"""
+        """cp $(dirname {input})/*.faa {PHYLOPHLAN_DIR}/input/{wildcards.sample}/"""
+        
+rule phylophlan:
+    input:
+        bin_dir + "{sample}/phylo/prep.done"
+    output:
+        touch(bin_dir + "{sample}/phylo/phlan.done")
+    threads:
+        config["phylophlan"]["threads"]
+    log:
+        bin_dir + "{sample}/phylo/phylophlan.log"
+    shell:
+       """set +u; {PHYLOPHLAN_ENV}; set -u \n"""
+       """touch {log} \n""" 
+       """log_file=$(readlink -e {log}) \n"""
+       """cd {PHYLOPHLAN_DIR} \n"""
+       """python phylophlan.py -i -t {wildcards.sample} --nproc {threads} &> $log_file \n"""
+       """cd - \n""" 
+       """source deactivate"""
+
+rule phylophlan_post:
+    input:
+        bin_dir + "{sample}/phylo/phlan.done"
+    output:
+        touch(bin_dir + "{sample}/phylo/phylo.done")
+    shell:
+        """cp {PHYLOPHLAN_DIR}/output/{wildcards.sample}/* $(dirname {output}) \n"""
+        """rm -r {PHYLOPHLAN_DIR}/{{input,output,data}}/{wildcards.sample}"""
+
+#todo reduce code duplication
+rule phylophlan_prep_combined:
+    input:
+        expand(bin_dir + "{sample}/prodigal/prodigal.done", sample=sample_names)
+    output:
+        touch("{path}/comb_prep.done")
+    shell:
+        """mkdir -p {PHYLOPHLAN_DIR}/input/combined \n"""
+        """for f in {input} ; do cp $(dirname $f)/*.faa {PHYLOPHLAN_DIR}/input/combined/ ; done"""
+        
+rule phylophlan_combined:
+    input:
+        "{path}/comb_prep.done"
+    output:
+        touch("{path}/comb_phlan.done")
+    threads:
+        config["phylophlan"]["combined_threads"]
+    log:
+        "{path}/phylophlan.log"
+    shell:
+       """set +u; {PHYLOPHLAN_ENV}; set -u \n"""
+       """touch {log} \n""" 
+       """log_file=$(readlink -e {log}) \n"""
+       """cd {PHYLOPHLAN_DIR} ; python phylophlan.py -i -t combined --nproc {threads} &> $log_file ; cd - \n""" 
+       """source deactivate"""
+
+rule phylophlan_post_combined:
+    input:
+        "{path}/comb_phlan.done"
+    output:
+        touch("{path}/comb_phylo.done")
+    shell:
+      """cp {PHYLOPHLAN_DIR}/output/combined/* $(dirname {output}) \n"""
+      """rm -r {PHYLOPHLAN_DIR}/{{input,output,data}}/combined"""
+

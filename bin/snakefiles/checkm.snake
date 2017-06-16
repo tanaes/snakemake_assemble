@@ -1,0 +1,33 @@
+
+#---- CheckM stats -------------------------------------------------------------
+CHECKM_ENV = config['checkm_env']
+
+rule checkm:
+    input:   "{path}/{sample}/prodigal/prodigal.done"
+    output:  "{path}/{sample}/checkm/qa.tsv"
+    params:  in_dir="{path}/{sample}/prodigal", out_dir="{path}/{sample}/checkm"
+    log:     "{path}/{sample}/checkm.log"
+    threads:
+        8
+    #TODO set up --tmpdir
+    shell:   "set +u; {CHECKM_ENV}; set -u \n"
+             "rm -rf {params.out_dir}/* \n"
+             #"echo 'Launching checkm lineage_wf' > {log} \n"
+             "checkm lineage_wf -t {threads} --pplacer_threads {threads} --genes -x faa {params.in_dir} {params.out_dir} &> {log} \n"
+             "checkm qa -t {threads} -o 1 --tab_table -f {output} {params.out_dir}/lineage.ms {params.out_dir} &>> {log} \n"
+             "source deactivate"
+
+rule parse_checkm:
+    input:   qa="{path}/qa.tsv", tree_qa="{path}/tree_qa.tsv"
+    output:  "{path}/checkm.tsv"
+    run:
+        import pandas as pd
+        table = pd.read_table(input.qa, dtype="str")
+        tree_table = pd.read_table(input.tree_qa, dtype="str", na_filter=False)
+        all_table = pd.merge(table, tree_table, on="Bin Id")
+        res_table = all_table[["Bin Id", "Taxonomy (contained)", "Taxonomy (sister lineage)", "Genome size (Mbp)", "Completeness", "Contamination"]].copy()
+        def extract_taxon(taxonomy):
+            return str(taxonomy).split(";")[-1]
+        for column in ["Taxonomy (contained)", "Taxonomy (sister lineage)"]:
+            res_table[column] = res_table[column].apply(extract_taxon)
+        res_table.to_csv(output[0], index=False, sep="\t")

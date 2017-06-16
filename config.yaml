@@ -3,6 +3,8 @@ tmp_dir_root: ./
 
 env: source activate snakemake_assemble
 anvi_env: source activate sn_anvio
+phylophlan_env: source activate phylophlan
+checkm_env: source activate checkm
 metaphlan_env: source activate humann2
 humann2_env: source activate humann2
 kraken_env: source activate kraken
@@ -11,6 +13,9 @@ shogun_env: source activate shogun
 software:
   snakemake_folder: ./
   mash: 
+
+  #Should be in the storage!!! A lot of data will be copied there while running
+  phylophlan_folder: folder_with_phylophlan
 
 params:
   skewer: -x ./adapters/HyperPlus.fa -n -l 100 -m any -q 15
@@ -28,6 +33,13 @@ params:
 resources:
   centrifuge_base: /home/jgsanders/miniconda/envs/anvio2/centrifuge
   centrifuge_models: /home/jgsanders/miniconda/envs/anvio2/centrifuge/b+h+v/b+h+v
+
+gene_search:
+  min_length: 2 #Kb
+
+phylophlan:
+  threads: 12
+  combined_threads: 24
 
 binning_samples:
   - sample1

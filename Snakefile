@@ -4,12 +4,12 @@ import tempfile
 configfile: "config.yaml"
 
 ENV = config["env"]
-
 shell.prefix("set +u; " + ENV + "; set -u; ")
 
 TMP_DIR_ROOT = config['tmp_dir_root']
 
 samples = config["samples"]
+sample_names=config['binning_samples']
 
 snakefiles = os.path.join(config["software"]["snakemake_folder"],
                           "bin/snakefiles/")
@@ -26,6 +26,11 @@ include: snakefiles + "anvio"
 include: snakefiles + "clean"
 include: snakefiles + "test"
 include: snakefiles + "util"
+include: snakefiles + "gene_search.snake"
+include: snakefiles + "phylo.snake"
+include: snakefiles + "checkm.snake"
+
+localrules: phylophlan_prep, phylophlan_post, phylophlan_prep_combined, phylophlan_post_combined
 
 rule all:
     # raw
@@ -57,4 +62,12 @@ rule all:
         expand(anvio_dir + "{bin_sample}/{bin_sample}_samples-summary_CONCOCT.tar.gz",
                bin_sample=config['binning_samples']),
         expand(anvio_dir + "{bin_sample}/{bin_sample}.db.anvi_add_maxbin.done",
-               bin_sample=config['binning_samples'])
+               bin_sample=config['binning_samples']),
+    # CheckM
+        #expand(bin_dir + "{bin_sample}/checkm/checkm.done",
+        expand(bin_dir + "{bin_sample}/checkm/qa.tsv",
+               bin_sample=config['binning_samples']),
+    # PhyloPhlan
+        ### Uncomment to enable phylophlan run for the combined set of bins
+        #bin_dir + "combined/phylo/comb_phylo.done",
+        expand(bin_dir + "{bin_sample}/phylo/phylo.done", bin_sample = sample_names)
