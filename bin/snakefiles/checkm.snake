@@ -2,23 +2,19 @@
 #---- CheckM stats -------------------------------------------------------------
 CHECKM_ENV = config['checkm_env']
 
-rule checkm_all:
-    input:
-        expand(bin_dir + "{bin}/checkm/checkm.tsv",
-               bin=config['binning_samples'])
-
 rule checkm:
-    input:   "{path}/{bin}/maxbin/{bin}.summary"
-    output:  qa="{path}/{bin}/checkm/qa.tsv", tree_qa="{path}/{bin}/checkm/tree_qa.tsv"
-    params:  in_dir="{path}/{bin}/maxbin", out_dir="{path}/{bin}/checkm"
-    log:     "{path}/{bin}/checkm/checkm.log"
-    #TODO use already called genes
+    input:   "{path}/{sample}/prodigal/prodigal.done"
+    output:  "{path}/{sample}/checkm/qa.tsv"
+    params:  in_dir="{path}/{sample}/prodigal", out_dir="{path}/{sample}/checkm"
+    log:     "{path}/{sample}/checkm.log"
+    threads:
+        8
+    #TODO set up --tmpdir
     shell:   "set +u; {CHECKM_ENV}; set -u \n"
-             "checkm tree -x fasta {params.in_dir} {params.out_dir} &> {log} \n"
-             "checkm tree_qa -o 2 --tab_table -f {output.tree_qa} {params.out_dir} &> {log} \n"
-             "checkm lineage_set {params.out_dir} {params.out_dir}/lineage.ms &> {log} \n"
-             "checkm analyze -x fasta {params.out_dir}/lineage.ms {params.in_dir} {params.out_dir} &> {log} \n"
-             "checkm qa -o 2 --tab_table -f {output.qa} {params.out_dir}/lineage.ms {params.out_dir} &> {log} \n"
+             "rm -rf {params.out_dir}/* \n"
+             #"echo 'Launching checkm lineage_wf' > {log} \n"
+             "checkm lineage_wf -t {threads} --pplacer_threads {threads} --genes -x faa {params.in_dir} {params.out_dir} &> {log} \n"
+             "checkm qa -t {threads} -o 1 --tab_table -f {output} {params.out_dir}/lineage.ms {params.out_dir} &>> {log} \n"
              "source deactivate"
 
 rule parse_checkm:

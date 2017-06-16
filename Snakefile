@@ -64,9 +64,10 @@ rule all:
         expand(anvio_dir + "{bin_sample}/{bin_sample}.db.anvi_add_maxbin.done",
                bin_sample=config['binning_samples']),
     # CheckM
-        expand(bin_dir + "{bin_sample}/checkm/checkm.tsv",
+        #expand(bin_dir + "{bin_sample}/checkm/checkm.done",
+        expand(bin_dir + "{bin_sample}/checkm/qa.tsv",
                bin_sample=config['binning_samples']),
     # PhyloPhlan
-        expand(bin_dir + "{bin_sample}/phylo/phylo.done", bin_sample = sample_names)
         ### Uncomment to enable phylophlan run for the combined set of bins
-        #bin_dir + "combined_phylo/comb_phylo.done"
+        #bin_dir + "combined/phylo/comb_phylo.done",
+        expand(bin_dir + "{bin_sample}/phylo/phylo.done", bin_sample = sample_names)
