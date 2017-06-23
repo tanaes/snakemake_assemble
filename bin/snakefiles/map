@@ -6,7 +6,7 @@ rule map_bowtie2_index:
     log:
         map_dir + "logs/bowtie2_index_{bin_sample}.log"
     benchmark:
-        "benchmarks/bin/bowtie2_index.{bin_sample}.json"
+        "benchmarks/map/bowtie2_index.sample=[{bin_sample}].json"
     threads:
         8
     run:
@@ -26,7 +26,7 @@ rule map_bowtie2:
         bowtie = map_dir + "logs/bowtie2_map_{bin_sample}_{abund_sample}.bowtie.log",
         other = map_dir + "logs/bowtie2_map_{bin_sample}_{abund_sample}.other.log"
     benchmark:
-        "benchmarks/bin/bowtie2_index.{bin_sample}_{abund_sample}.json"
+        "benchmarks/map/bowtie2.sample=[{bin_sample}].abund_sample=[{abund_sample}].json"
     threads:
         8
     run:
@@ -53,7 +53,7 @@ rule map_faidx_index:
     log:
         map_dir + "logs/faidx_index_{bin_sample}.log"
     benchmark:
-        "benchmarks/bin/faidx_index.{bin_sample}.json"
+        "benchmarks/map/faidx_index.sample=[{bin_sample}].json"
     threads:
         1
     run:
@@ -72,7 +72,7 @@ rule map_cram:
     log:
         map_dir + "logs/cram_{bin_sample}_{bin_sample}.log"
     benchmark:
-        "benchmarks/bin/cram_{bin_sample}_{bin_sample}.json"
+        "benchmarks/map/cram.sample=[{bin_sample}].abund_sample=[{abund_sample}].json"
     threads:
         16
     run:

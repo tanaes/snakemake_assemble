@@ -12,7 +12,7 @@ rule anvi_gen_contigs_database:
     log:
         anvio_dir + "logs/anvi_gen_contigs_database.{bin_sample}.log"
     benchmark:
-        "benchmarks/anvio/anvi_gen_contigs_database.{bin_sample}.json"
+        "benchmarks/anvio/anvi_gen_contigs_database.sample=[{bin_sample}].json"
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             dbname = os.path.basename(output.db)
@@ -36,7 +36,7 @@ rule anvi_run_hmms:
     log:
         anvio_dir + "logs/anvi_run_hmms.{bin_sample}.log"
     benchmark:
-        "benchmarks/anvio/anvi_run_hmms.{bin_sample}.json"
+        "benchmarks/anvio/anvi_run_hmms.sample=[{bin_sample}].json"
     run:
         db = os.path.join(os.path.dirname(input[0]),wildcards.bin_sample + '.db')
         shell("""
@@ -54,7 +54,7 @@ rule anvi_export_gene_calls:
     log:
         anvio_dir + "logs/anvi_export_gene_calls.{bin_sample}.log"
     benchmark:
-        "benchmarks/anvio/anvi_export_gene_calls.{bin_sample}.json"
+        "benchmarks/anvio/anvi_export_gene_calls.sample=[{bin_sample}].json"
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             out_name = os.path.basename(output[0])
@@ -78,7 +78,7 @@ rule anvi_run_centrifuge:
     log:
         anvio_dir + "logs/anvi_run_centrifuge.{bin_sample}.log"
     benchmark:
-        "benchmarks/anvio/anvi_run_centrifuge.{bin_sample}.json"
+        "benchmarks/anvio/anvi_run_centrifuge.sample=[{bin_sample}].json"
     params:
         centrifuge_base=config['resources']['centrifuge_base'],
         centrifuge_models=config['resources']['centrifuge_models']
@@ -123,7 +123,7 @@ rule anvi_profile:
     log:
         anvio_dir + "logs/anvi_profile.{bin_sample}.{abund_sample}.log"
     benchmark:
-        "benchmarks/anvio/anvi_profile.{bin_sample}.{abund_sample}.json"
+        "benchmarks/anvio/anvi_profile.sample=[{bin_sample}].abund_sample=[{abund_sample}].json"
     threads: 4
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
@@ -162,7 +162,7 @@ rule anvi_merge:
     log:
         anvio_dir + "logs/anvi_merge.{bin_sample}.log"
     benchmark:
-        "benchmarks/anvio/anvi_merge.{bin_sample}.json"
+        "benchmarks/anvio/anvi_merge.sample=[{bin_sample}].json"
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             merge_dir = os.path.dirname(output.prof)
@@ -188,7 +188,7 @@ rule anvi_add_maxbin:
     log:
         anvio_dir + "logs/anvi_add_maxbin.{bin_sample}.log"
     benchmark:
-        "benchmarks/anvio/anvi_add_maxbin.{bin_sample}.json"
+        "benchmarks/anvio/anvi_add_maxbin.sample=[{bin_sample}].json"
     run:
         db = os.path.join(os.path.dirname(input.db_done),wildcards.bin_sample + '.db')
         shell("""
@@ -213,7 +213,7 @@ rule anvi_summarize:
     log:
         anvio_dir + "logs/anvi_summarize.{bin_sample}.log"
     benchmark:
-        "benchmarks/anvio/anvi_summarize.{bin_sample}.json"
+        "benchmarks/anvio/anvi_summarize.sample=[{bin_sample}].json"
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             db = os.path.join(os.path.dirname(input.db_done),wildcards.bin_sample + '.db')

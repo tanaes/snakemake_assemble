@@ -14,7 +14,7 @@ rule assemble_megahit:
     log:
         assemble_dir + "logs/megahit_{sample}.log"
     benchmark:
-        "benchmarks/assemble/megahit.{sample}.json"
+        "benchmarks/assemble/megahit.sample=[{sample}].json"
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             mem_b = params.memory * 1000000000
@@ -40,7 +40,7 @@ rule assemble_metaspades:
     log:
         assemble_dir + "logs/metaspades_{sample}.log"
     benchmark:
-        "benchmarks/assemble/metaspades.{sample}.json"
+        "benchmarks/assemble/metaspades.sample=[{sample}].json"
     params:
         mem=240
     threads:
@@ -69,7 +69,7 @@ rule assemble_spades:
     log:
         assemble_dir + "logs/spades_{sample}.log"
     benchmark:
-        "benchmarks/assemble/spades.{sample}.json"
+        "benchmarks/assemble/spades.sample=[{sample}].json"
     params:
         mem=240
     threads:
@@ -101,7 +101,7 @@ rule assemble_metaquast:
     threads:
         8
     benchmark:
-        "benchmarks/assemble/metaquast.{sample}.json"
+        "benchmarks/assemble/metaquast.sample=[{sample}].json"
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             outdir = os.path.dirname(output.done)
@@ -128,7 +128,7 @@ rule assemble_quast:
     threads:
         8
     benchmark:
-        "benchmarks/assemble/quast.{sample}.json"
+        "benchmarks/assemble/quast.sample=[{sample}].json"
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             outdir = os.path.dirname(output.done)
