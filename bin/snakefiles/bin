@@ -7,7 +7,7 @@ rule bin_make_cov_files:
     output:
         temp(bin_dir + "{bin_sample}/abundance_files/{bin_sample}_abund_list.txt")
     log:
-        bin_dir + "logs/bin_make_cov_files_{bin_sample}.log"
+        bin_dir + "logs/bin_make_cov_files.sample=[{bin_sample}].log"
     benchmark:
         "benchmarks/bin/bin_make_cov_files.sample=[{bin_sample}].json"
     threads:
@@ -41,7 +41,7 @@ rule bin_run_maxbin:
     output: 
         bin_dir + "{bin_sample}/maxbin/{bin_sample}.summary"
     log:
-        bin_dir + "logs/bin_maxbin_{bin_sample}.log"
+        bin_dir + "logs/bin_maxbin.sample=[{bin_sample}].log"
     benchmark:
         "benchmarks/bin/bin_maxbin.sample=[{bin_sample}].json"
     params:
@@ -67,7 +67,7 @@ rule summarize_maxbin:
     output:
         bin_dir + "{bin_sample}/maxbin/{bin_sample}_maxbin_bins.txt"
     log:
-        bin_dir + "logs/summarize_maxbin_{bin_sample}.log"
+        bin_dir + "logs/summarize_maxbin.sample=[{bin_sample}].log"
     benchmark:
         "benchmarks/bin/summarize_maxbin.sample=[{bin_sample}].json"
     threads:

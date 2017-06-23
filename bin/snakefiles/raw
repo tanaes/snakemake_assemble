@@ -10,7 +10,7 @@ rule raw_make_links:
     threads:
         1
     log:
-        raw_dir + "logs/raw_combined_reads.{sample}.log"
+        raw_dir + "logs/raw_combined_reads.sample=[{sample}].log"
     run:
         for f in input.forward + input.reverse:
             in_fp = os.path.realpath(f)
@@ -32,7 +32,7 @@ rule raw_per_file_fastqc:
     threads:
         4
     log:
-        raw_dir + "logs/raw_per_file_fastqc.{sample}.log"
+        raw_dir + "logs/raw_per_file_fastqc.sample=[{sample}].log"
     run:
         out_dir = os.path.dirname(output[0])
         in_fastqs = ' '.join(input.forward + input.reverse)
@@ -73,7 +73,7 @@ rule raw_combine_files:
     threads:
         4
     log:
-        raw_dir + "logs/raw_combine_files.{sample}.log"
+        raw_dir + "logs/raw_combine_files.sample=[{sample}].log"
     run:
         f_fastqs = ' '.join(input.forward)
         r_fastqs = ' '.join(input.reverse)
@@ -96,7 +96,7 @@ rule raw_per_sample_fastqc:
     threads:
         4
     log:
-        raw_dir + "logs/raw_per_sample_fastqc.{sample}.log"
+        raw_dir + "logs/raw_per_sample_fastqc.sample=[{sample}].log"
     run:
         out_dir = os.path.dirname(output[0])
         print(out_dir)

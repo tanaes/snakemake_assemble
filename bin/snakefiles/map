@@ -4,7 +4,7 @@ rule map_bowtie2_index:
     output:
         touch(map_dir + "{bin_sample}/mapping/{bin_sample}.done")
     log:
-        map_dir + "logs/bowtie2_index_{bin_sample}.log"
+        map_dir + "logs/bowtie2_index.sample=[{bin_sample}].log"
     benchmark:
         "benchmarks/map/bowtie2_index.sample=[{bin_sample}].json"
     threads:
@@ -23,8 +23,8 @@ rule map_bowtie2:
         bam = temp(map_dir + "{bin_sample}/mapping/{bin_sample}_{abund_sample}.bam"),
         bai = temp(map_dir + "{bin_sample}/mapping/{bin_sample}_{abund_sample}.bam.bai")
     log:
-        bowtie = map_dir + "logs/bowtie2_map_{bin_sample}_{abund_sample}.bowtie.log",
-        other = map_dir + "logs/bowtie2_map_{bin_sample}_{abund_sample}.other.log"
+        bowtie = map_dir + "logs/bowtie2_map.sample=[{bin_sample}].abund_sample=[{abund_sample}].bowtie.log",
+        other = map_dir + "logs/bowtie2_map.sample=[{bin_sample}].abund_sample=[{abund_sample}].other.log"
     benchmark:
         "benchmarks/map/bowtie2.sample=[{bin_sample}].abund_sample=[{abund_sample}].json"
     threads:
@@ -51,7 +51,7 @@ rule map_faidx_index:
     output:
         assemble_dir + "{bin_sample}/%s/{bin_sample}.contigs.simple.fa.fai" % config['mapping_assembler']
     log:
-        map_dir + "logs/faidx_index_{bin_sample}.log"
+        map_dir + "logs/faidx_index.sample=[{bin_sample}].log"
     benchmark:
         "benchmarks/map/faidx_index.sample=[{bin_sample}].json"
     threads:
@@ -70,7 +70,7 @@ rule map_cram:
     params:
         cram = config['params']['cram']
     log:
-        map_dir + "logs/cram_{bin_sample}_{bin_sample}.log"
+        map_dir + "logs/cram.sample=[{bin_sample}].abund_sample=[{abund_sample}].log"
     benchmark:
         "benchmarks/map/cram.sample=[{bin_sample}].abund_sample=[{abund_sample}].json"
     threads:

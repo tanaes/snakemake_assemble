@@ -13,7 +13,7 @@ rule qc_atropos:
     params:
         atropos = config['params']['atropos']
     log:
-        qc_dir + "logs/qc_atropos.{sample}.log"
+        qc_dir + "logs/qc_atropos.sample=[{sample}].log"
     benchmark:
         "benchmarks/qc/qc_atropos.sample=[{sample}].json"
     run:
@@ -55,8 +55,8 @@ rule qc_filter:
     threads:
         4
     log:
-        bowtie = qc_dir + "logs/qc_filter.bowtie.{sample}.log",
-        other = qc_dir + "logs/qc_filter.other.{sample}.log"
+        bowtie = qc_dir + "logs/qc_filter.bowtie.sample=[{sample}].log",
+        other = qc_dir + "logs/qc_filter.other.sample=[{sample}].log"
     benchmark:
          "benchmarks/qc/qc_filter.sample=[{sample}].json"
     run:
@@ -100,7 +100,7 @@ rule qc_per_sample_fastqc:
     threads:
         4
     log:
-        qc_dir + "logs/qc_per_sample_fastqc.{sample}.log"
+        qc_dir + "logs/qc_per_sample_fastqc.sample=[{sample}].log"
     benchmark:
         "benchmarks/qc/qc_per_sample_fastqc.sample=[{sample}].json"
     run:

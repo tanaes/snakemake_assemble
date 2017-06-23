@@ -12,7 +12,7 @@ rule assemble_megahit:
     threads:
         12
     log:
-        assemble_dir + "logs/megahit_{sample}.log"
+        assemble_dir + "logs/megahit.sample=[{sample}].log"
     benchmark:
         "benchmarks/assemble/megahit.sample=[{sample}].json"
     run:
@@ -38,7 +38,7 @@ rule assemble_metaspades:
     output:
         assemble_dir + "{sample}/metaspades/{sample}.contigs.fa"
     log:
-        assemble_dir + "logs/metaspades_{sample}.log"
+        assemble_dir + "logs/metaspades.sample=[{sample}].log"
     benchmark:
         "benchmarks/assemble/metaspades.sample=[{sample}].json"
     params:
@@ -67,7 +67,7 @@ rule assemble_spades:
     output:
         assemble_dir + "{sample}/spades/{sample}.contigs.fa"
     log:
-        assemble_dir + "logs/spades_{sample}.log"
+        assemble_dir + "logs/spades.sample=[{sample}].log"
     benchmark:
         "benchmarks/assemble/spades.sample=[{sample}].json"
     params:
@@ -97,7 +97,7 @@ rule assemble_metaquast:
     output:
         done = assemble_dir + "{sample}/metaquast/{sample}.metaquast.done"
     log:
-        assemble_dir + "logs/metaquast_{sample}.log"
+        assemble_dir + "logs/metaquast.sample=[{sample}].log"
     threads:
         8
     benchmark:
@@ -124,7 +124,7 @@ rule assemble_quast:
     output:
         done = assemble_dir + "{sample}/quast/{sample}.quast.done"
     log:
-        assemble_dir + "logs/quast_{sample}.log"
+        assemble_dir + "logs/quast.sample=[{sample}].log"
     threads:
         8
     benchmark:
@@ -150,7 +150,7 @@ rule assemble_simplify_fasta_headers:
         fasta = assemble_dir + "{sample}/{assembler}/{sample}.contigs.simple.fa",
         headers = assemble_dir + "{sample}/{assembler}/{sample}.contigs.headers.txt"
     log:
-        assemble_dir + "logs/simplify_fasta_headers_{sample}.log"
+        assemble_dir + "logs/simplify_fasta_headers.sample=[{sample}].log"
     threads:
         1
     run:
