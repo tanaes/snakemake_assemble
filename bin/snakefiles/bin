@@ -41,9 +41,9 @@ rule bin_run_maxbin:
     output: 
         bin_dir + "{bin_sample}/maxbin/{bin_sample}.summary"
     log:
-        bin_dir + "logs/bin_maxbin.sample=[{bin_sample}].log"
+        bin_dir + "logs/bin_run_maxbin.sample=[{bin_sample}].log"
     benchmark:
-        "benchmarks/bin/bin_maxbin.sample=[{bin_sample}].txt"
+        "benchmarks/bin/bin_run_maxbin.sample=[{bin_sample}].txt"
     params:
         maxbin = config['params']['maxbin']
     threads:
