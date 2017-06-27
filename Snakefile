@@ -28,6 +28,8 @@ include: snakefiles + "anvio"
 include: snakefiles + "clean"
 include: snakefiles + "test"
 include: snakefiles + "util"
+include: snakefiles + "report"
+
 
 rule all:
     # raw
