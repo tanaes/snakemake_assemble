@@ -8,7 +8,7 @@ rule map_bowtie2_index:
     benchmark:
         "benchmarks/map/map_bowtie2_index.sample=[{bin_sample}].txt"
     threads:
-        8
+        12
     run:
         outdir = os.path.dirname(output[0])
         shell("bowtie2-build {input} {outdir}/{wildcards.bin_sample} 2> {log} 1>&2")
@@ -28,7 +28,7 @@ rule map_bowtie2:
     benchmark:
         "benchmarks/map/map_bowtie2.sample=[{bin_sample}].abund_sample=[{abund_sample}].txt"
     threads:
-        8
+        12
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             idx_base = os.path.join(os.path.dirname(input.idx),
@@ -74,7 +74,7 @@ rule map_cram:
     benchmark:
         "benchmarks/map/map_cram.sample=[{bin_sample}].abund_sample=[{abund_sample}].txt"
     threads:
-        16
+        12
     run:
         if params.cram is None:
             params.cram = ''

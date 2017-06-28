@@ -99,7 +99,7 @@ rule assemble_metaquast:
     log:
         assemble_dir + "logs/assemble_metaquast.sample=[{sample}].log"
     threads:
-        8
+        12
     benchmark:
         "benchmarks/assemble/assemble_metaquast.sample=[{sample}].txt"
     run:

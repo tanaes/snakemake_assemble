@@ -11,7 +11,7 @@ rule bin_make_cov_files:
     benchmark:
         "benchmarks/bin/bin_make_cov_files.sample=[{bin_sample}].txt"
     threads:
-        8
+        12
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             out_dir = os.path.dirname(output[0])
@@ -47,7 +47,7 @@ rule bin_run_maxbin:
     params:
         maxbin = config['params']['maxbin']
     threads:
-        8
+        12
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             out_base = os.path.dirname(output[0])

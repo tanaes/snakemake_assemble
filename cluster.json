@@ -1,14 +1,14 @@
 {
     "__default__": {
         "time"      : "4:00:00",
-        "n"         : 4,
-        "mem"       : 8,
+        "n"         : 1,
+        "mem"       : 4,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "qc_atropos": {
         "time"      : "4:00:00",
-        "n"         : 8,
+        "n"         : 12,
         "mem"       : 16,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
@@ -36,43 +36,43 @@
     },
     "assemble_metaquast": {
         "time"      : "8:00:00",
-        "n"         : 8,
+        "n"         : 12,
         "mem"       : 32,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "map_bowtie2_index": {
         "time"      : "2:00:00",
-        "n"         : 8,
-        "mem"       : 32,
+        "n"         : 2,
+        "mem"       : 4,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "map_bowtie2": {
         "time"      : "8:00:00",
-        "n"         : 8,
+        "n"         : 12,
         "mem"       : 32,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "bin_run_maxbin": {
         "time"      : "8:00:00",
-        "n"         : 8,
+        "n"         : 12,
         "mem"       : 32,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "bin_make_cov_files": {
         "time"      : "8:00:00",
-        "n"         : 8,
-        "mem"       : 32,
+        "n"         : 1,
+        "mem"       : 2,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "tar_bin_cov_files": {
         "time"      : "1:00:00",
-        "n"         : 2,
-        "mem"       : 4,
+        "n"         : 1,
+        "mem"       : 2,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
@@ -99,7 +99,7 @@
     },
     "anvi_profile": {
         "time" : "2:00:00",
-        "n": 4,
+        "n": 12,
         "mem": 64,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"

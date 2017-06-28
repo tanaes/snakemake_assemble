@@ -32,7 +32,7 @@ rule anvi_run_hmms:
     output:
         touch(anvio_dir + "{bin_sample}/{bin_sample}.db.run-hmms.done")
     threads:
-        8
+        12
     log:
         anvio_dir + "logs/anvi_run_hmms.sample=[{bin_sample}].log"
     benchmark:
@@ -82,7 +82,7 @@ rule anvi_run_centrifuge:
     params:
         centrifuge_base=config['resources']['centrifuge_base'],
         centrifuge_models=config['resources']['centrifuge_models']
-    threads: 8
+    threads: 12
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             hits_name = os.path.basename(output.hits)
@@ -124,7 +124,7 @@ rule anvi_profile:
         anvio_dir + "logs/anvi_profile.sample=[{bin_sample}].abund_sample=[{abund_sample}].log"
     benchmark:
         "benchmarks/anvio/anvi_profile.sample=[{bin_sample}].abund_sample=[{abund_sample}].txt"
-    threads: 4
+    threads: 12
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             prof_dir = os.path.dirname(output.prof)
