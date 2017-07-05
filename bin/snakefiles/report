@@ -205,9 +205,12 @@ def plot_resource_boxplot(benchmark_tidy, outdir = '.'):
     rule_means_df = test_df.groupby('rule', as_index=False).mean()
     rule_means_df['mem_mb'] = rule_means_df['mem'] * 1000
     rule_means_df['cpu_avail'] = rule_means_df['n_cpus'] * 100
-    
+
     # TROUBLESHOOTING
     print(test_df.head())
+
+    print(rule_means_df.head())
+
 
     sns.boxplot(x = 'rule', y = 'value', data = test_df, ax = ax1)
     sns.stripplot(x='rule',
@@ -285,7 +288,7 @@ rule report_benchmark_summary:
         benchmark_df, benchmark_tidy = load_benchmarks(benchmark_fps, multiqc, cluster_json)
 
         # TROUBLESHOOTING
-        print(bencmark_df.head())
+        print(benchmark_df.head())
 
         # save benchmark dataframe
         benchmark_df.to_csv(output.stats, sep = '\t')
