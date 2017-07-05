@@ -207,8 +207,9 @@ def plot_resource_boxplot(benchmark_tidy, outdir = '.'):
     rule_means_df['cpu_avail'] = rule_means_df['n_cpus'] * 100
 
     # TROUBLESHOOTING
+    print("test_df:\n")
     print(test_df.head())
-
+    print("rule_means_df:\n")
     print(rule_means_df.head())
 
 
@@ -288,7 +289,10 @@ rule report_benchmark_summary:
         benchmark_df, benchmark_tidy = load_benchmarks(benchmark_fps, multiqc, cluster_json)
 
         # TROUBLESHOOTING
+        print("benchmark_df:\n")
         print(benchmark_df.head())
+        print("benchmark_tidy:\n")
+        print(benchmark_tidy.head())
 
         # save benchmark dataframe
         benchmark_df.to_csv(output.stats, sep = '\t')
