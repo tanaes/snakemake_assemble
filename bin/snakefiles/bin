@@ -7,11 +7,11 @@ rule bin_make_cov_files:
     output:
         temp(bin_dir + "{bin_sample}/abundance_files/{bin_sample}_abund_list.txt")
     log:
-        bin_dir + "logs/bin_make_cov_files_{bin_sample}.log"
+        bin_dir + "logs/bin_make_cov_files.sample=[{bin_sample}].log"
     benchmark:
-        "benchmarks/bin/bin_make_cov_files_{bin_sample}.json"
+        "benchmarks/bin/bin_make_cov_files.sample=[{bin_sample}].txt"
     threads:
-        8
+        12
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             out_dir = os.path.dirname(output[0])
@@ -41,13 +41,13 @@ rule bin_run_maxbin:
     output: 
         bin_dir + "{bin_sample}/maxbin/{bin_sample}.summary"
     log:
-        bin_dir + "logs/bin_maxbin_{bin_sample}.log"
+        bin_dir + "logs/bin_run_maxbin.sample=[{bin_sample}].log"
     benchmark:
-        "benchmarks/bin/bin_maxbin_{bin_sample}.json"
+        "benchmarks/bin/bin_run_maxbin.sample=[{bin_sample}].txt"
     params:
         maxbin = config['params']['maxbin']
     threads:
-        8
+        12
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             out_base = os.path.dirname(output[0])
@@ -67,9 +67,9 @@ rule summarize_maxbin:
     output:
         bin_dir + "{bin_sample}/maxbin/{bin_sample}_maxbin_bins.txt"
     log:
-        bin_dir + "logs/summarize_maxbin_{bin_sample}.log"
+        bin_dir + "logs/summarize_maxbin.sample=[{bin_sample}].log"
     benchmark:
-        "benchmarks/bin/summarize_maxbin_{bin_sample}.json"
+        "benchmarks/bin/summarize_maxbin.sample=[{bin_sample}].txt"
     threads:
         1
     run:
@@ -95,6 +95,8 @@ rule tar_bin_cov_files:
         bin_dir + "{bin_sample}/abundance_files.tar.gz"
     threads:
         1
+    benchmark:
+        "benchmarks/bin/tar_bin_cov_files.sample=[{bin_sample}].txt"
     run:
         abund_dir = os.path.dirname(input.abund_list)
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:

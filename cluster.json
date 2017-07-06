@@ -1,101 +1,108 @@
 {
     "__default__": {
         "time"      : "4:00:00",
-        "n"         : 4,
-        "mem"       : 8,
-        "output"    : "/dev/null",
-        "error"     : "/dev/null"
+        "n"         : 1,
+        "mem"       : 4,
+        "output"    : "cluster_logs/{rule}.{wildcards}.out",
+        "error"     : "cluster_logs/{rule}.{wildcards}.err"
+    },
+    "qc_atropos": {
+        "time"      : "4:00:00",
+        "n"         : 12,
+        "mem"       : 16,
+        "output"    : "cluster_logs/{rule}.{wildcards}.out",
+        "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "qc_filter": {
         "time"      : "4:00:00",
         "n"         : 12,
         "mem"       : 16,
-        "output"    : "/dev/null",
-        "error"     : "/dev/null"
+        "output"    : "cluster_logs/{rule}.{wildcards}.out",
+        "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "assemble_megahit": {
         "time"      : "12:00:00",
         "n"         : 12,
         "mem"       : 120,
-        "output"    : "/dev/null",
-        "error"     : "/dev/null"
+        "output"    : "cluster_logs/{rule}.{wildcards}.out",
+        "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "assemble_metaspades": {
-        "time"      : "24:00:00",
+        "time"      : "48:00:00",
         "n"         : 12,
-        "mem"       : 120,
-        "output"    : "/dev/null",
-        "error"     : "/dev/null"
+        "mem"       : 240,
+        "output"    : "cluster_logs/{rule}.{wildcards}.out",
+        "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "assemble_metaquast": {
         "time"      : "8:00:00",
-        "n"         : 8,
+        "n"         : 12,
         "mem"       : 32,
-        "output"    : "/dev/null",
-        "error"     : "/dev/null"
+        "output"    : "cluster_logs/{rule}.{wildcards}.out",
+        "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "map_bowtie2_index": {
         "time"      : "2:00:00",
-        "n"         : 8,
-        "mem"       : 32,
-        "output"    : "/dev/null",
-        "error"     : "/dev/null"
+        "n"         : 2,
+        "mem"       : 4,
+        "output"    : "cluster_logs/{rule}.{wildcards}.out",
+        "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "map_bowtie2": {
         "time"      : "8:00:00",
-        "n"         : 8,
+        "n"         : 12,
         "mem"       : 32,
-        "output"    : "/dev/null",
-        "error"     : "/dev/null"
+        "output"    : "cluster_logs/{rule}.{wildcards}.out",
+        "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "bin_run_maxbin": {
         "time"      : "8:00:00",
-        "n"         : 8,
+        "n"         : 12,
         "mem"       : 32,
-        "output"    : "/dev/null",
-        "error"     : "/dev/null"
+        "output"    : "cluster_logs/{rule}.{wildcards}.out",
+        "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "bin_make_cov_files": {
         "time"      : "8:00:00",
-        "n"         : 8,
-        "mem"       : 32,
-        "output"    : "/dev/null",
-        "error"     : "/dev/null"
+        "n"         : 12,
+        "mem"       : 12,
+        "output"    : "cluster_logs/{rule}.{wildcards}.out",
+        "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "tar_bin_cov_files": {
         "time"      : "1:00:00",
-        "n"         : 2,
-        "mem"       : 4,
-        "output"    : "/dev/null",
-        "error"     : "/dev/null"
+        "n"         : 1,
+        "mem"       : 2,
+        "output"    : "cluster_logs/{rule}.{wildcards}.out",
+        "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "map_cram": {
         "time"      : "1:00:00",
         "n"         : 16,
         "mem"       : 8,
-        "output"    : "/dev/null",
-        "error"     : "/dev/null"
+        "output"    : "cluster_logs/{rule}.{wildcards}.out",
+        "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "anvi_run_hmms": {
         "time" : "8:00:00",
         "n": 8,
         "mem": 32,
-        "output"    : "/dev/null",
-        "error"     : "/dev/null"
+        "output"    : "cluster_logs/{rule}.{wildcards}.out",
+        "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "anvi_run_centrifuge": {
-        "time" : "2:00:00",
+        "time" : "4:00:00",
         "n": 8,
         "mem": 32,
-        "output"    : "/dev/null",
-        "error"     : "/dev/null"
+        "output"    : "cluster_logs/{rule}.{wildcards}.out",
+        "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "anvi_profile": {
-        "time" : "2:00:00",
-        "n": 4,
+        "time" : "8:00:00",
+        "n": 12,
         "mem": 64,
-        "output"    : "/dev/null",
-        "error"     : "/dev/null"
+        "output"    : "cluster_logs/{rule}.{wildcards}.out",
+        "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "anvi_merge": {
         "time" : "8:00:00",

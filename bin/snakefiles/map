@@ -4,11 +4,11 @@ rule map_bowtie2_index:
     output:
         touch(map_dir + "{bin_sample}/mapping/{bin_sample}.done")
     log:
-        map_dir + "logs/bowtie2_index_{bin_sample}.log"
+        map_dir + "logs/map_bowtie2_index.sample=[{bin_sample}].log"
     benchmark:
-        "benchmarks/bin/bowtie2_index.{bin_sample}.json"
+        "benchmarks/map/map_bowtie2_index.sample=[{bin_sample}].txt"
     threads:
-        8
+        12
     run:
         outdir = os.path.dirname(output[0])
         shell("bowtie2-build {input} {outdir}/{wildcards.bin_sample} 2> {log} 1>&2")
@@ -23,12 +23,12 @@ rule map_bowtie2:
         bam = temp(map_dir + "{bin_sample}/mapping/{bin_sample}_{abund_sample}.bam"),
         bai = temp(map_dir + "{bin_sample}/mapping/{bin_sample}_{abund_sample}.bam.bai")
     log:
-        bowtie = map_dir + "logs/bowtie2_map_{bin_sample}_{abund_sample}.bowtie.log",
-        other = map_dir + "logs/bowtie2_map_{bin_sample}_{abund_sample}.other.log"
+        bowtie = map_dir + "logs/map_bowtie2.sample=[{bin_sample}].abund_sample=[{abund_sample}].bowtie.log",
+        other = map_dir + "logs/map_bowtie2.sample=[{bin_sample}].abund_sample=[{abund_sample}].other.log"
     benchmark:
-        "benchmarks/bin/bowtie2_index.{bin_sample}_{abund_sample}.json"
+        "benchmarks/map/map_bowtie2.sample=[{bin_sample}].abund_sample=[{abund_sample}].txt"
     threads:
-        8
+        12
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
             idx_base = os.path.join(os.path.dirname(input.idx),
@@ -51,9 +51,9 @@ rule map_faidx_index:
     output:
         assemble_dir + "{bin_sample}/%s/{bin_sample}.contigs.simple.fa.fai" % config['mapping_assembler']
     log:
-        map_dir + "logs/faidx_index_{bin_sample}.log"
+        map_dir + "logs/map_faidx_index.sample=[{bin_sample}].log"
     benchmark:
-        "benchmarks/bin/faidx_index.{bin_sample}.json"
+        "benchmarks/map/map_faidx_index.sample=[{bin_sample}].txt"
     threads:
         1
     run:
@@ -70,11 +70,11 @@ rule map_cram:
     params:
         cram = config['params']['cram']
     log:
-        map_dir + "logs/cram_{bin_sample}_{bin_sample}.log"
+        map_dir + "logs/map_cram.sample=[{bin_sample}].abund_sample=[{abund_sample}].log"
     benchmark:
-        "benchmarks/bin/cram_{bin_sample}_{bin_sample}.json"
+        "benchmarks/map/map_cram.sample=[{bin_sample}].abund_sample=[{abund_sample}].txt"
     threads:
-        16
+        12
     run:
         if params.cram is None:
             params.cram = ''

@@ -14,6 +14,7 @@ software:
 
 params:
   skewer: -x ./adapters/HyperPlus.fa -n -l 100 -m any -q 15
+  atropos: -a GATCGGAAGAGCACACGTCTGAACTCCAGTCAC -A GATCGGAAGAGCGTCGTGTAGGGAAAGGAGTGT -q 15 --minimum-length 100 --pair-filter any
   cram:
   maxbin: -plotmarker
   metaphlan:
@@ -49,6 +50,8 @@ assemblers:
   - metaspades
 
 mapping_assembler: metaspades
+
+trimmer: atropos
 
 samples:
   sample1:
