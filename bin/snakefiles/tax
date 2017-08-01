@@ -230,7 +230,7 @@ rule tax_kraken:
         forward = qc_dir + "{sample}/filtered/{sample}.R1.trimmed.filtered.fastq.gz",
         reverse = qc_dir + "{sample}/filtered/{sample}.R2.trimmed.filtered.fastq.gz"
     output:
-        map = tax_dir + "{sample}/kraken/{sample}_map.tsv.gz",
+        map = tax_dir + "{sample}/kraken/{sample}_map.txt",
         report = tax_dir + "{sample}/kraken/{sample}_report.txt"
     params:
         kraken_db = config['params']['kraken']['kraken_db'],
@@ -238,11 +238,14 @@ rule tax_kraken:
     threads:
         12
     log:
-        tax_dir + "logs/tax_kraken.{sample}.log"
+        tax_dir + "logs/tax_kraken.sample=[{sample}].log"
     benchmark:
-        "benchmarks/tax/tax_kraken.{sample}.json"
+        "benchmarks/tax/tax_kraken.sample=[{sample}].txt"
     run:
         with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
+            map_base = os.path.basename(output['map'])
+            report_base = os.path.basename(output['report'])
+            
             shell("""
                   set +u; {params.kraken_env}; set -u
 
@@ -253,20 +256,16 @@ rule tax_kraken:
                     --gzip-compressed \
                     --only-classified-output \
                     --threads {threads} \
-                    1> {temp_dir}/{wildcards.sample}_map.tsv \
+                    1> {temp_dir}/{map_base} \
                     2> {log}
 
-                  kraken-report {temp_dir}/{wildcards.sample}_map.tsv \
+                  kraken-report {temp_dir}/{map_base} \
                     --db {params.kraken_db} \
-                    1> {temp_dir}/{wildcards.sample}_report.txt \
+                    1> {temp_dir}/{report_base} \
                     2>> {log}
 
-                  pigz {temp_dir}/{wildcards.sample}_map.tsv \
-                    -p {threads} \
-                    2>> {log}
-
-                  scp {temp_dir}/{wildcards.sample}_map.tsv.gz {output.map}
-                  scp {temp_dir}/{wildcards.sample}_report.txt {output.report}
+                  scp {temp_dir}/{map_base} {output.map}
+                  scp {temp_dir}/{report_base} {output.report}
                   """)
 
 
@@ -275,30 +274,26 @@ rule tax_kraken_combine_reports:
     Combines the per-sample taxonomic profiles into a single run-wide table. 
     """
     input:
-        expand(tax_dir + "{sample}/kraken/{sample}_map.tsv.gz", sample=samples)
+        expand(tax_dir + "{sample}/kraken/{sample}_map.txt", sample=samples)
     output:
         report = tax_dir + "kraken/combined_profile.tsv"
     params:
         kraken_db = config['params']['kraken']["kraken_db"],
         kraken_env = config['kraken_env']
     log:
-        tax_dir + "logs/tax_kraken_combine_reports.{sample}.log"
+        tax_dir + "logs/tax_kraken_combine_reports.sample=[{sample}].log"
     benchmark:
-        "benchmarks/tax/tax_kraken_combine_reports.{sample}.json"
+        "benchmarks/tax/tax_kraken_combine_reports.sample=[{sample}].txt"
     run:
-        with tempfile.TemporaryDirectory(dir=find_local_scratch(TMP_DIR_ROOT)) as temp_dir:
-            for file in input:
-                shell("f=$(basename %s); zcat %s > %s/${{f:0:(${{#f}}-11)}}"
-                      % (file, file, temp_dir))
-            shell("""
-                  set +u; {params.kraken_env}; set -u
+        shell("""
+              set +u; {params.kraken_env}; set -u
 
-                  kraken-mpa-report {temp_dir}/* \
-                    --db {params.kraken_db} \
-                    --header-line \
-                    1> {output.report} \
-                    2> {log}
-                  """)
+              kraken-mpa-report {input} \
+                --db {params.kraken_db} \
+                --header-line \
+                | sed -i '1 s/.map.txt//g' 1> {output.report} \
+                2> {log}
+              """)
 
 
 rule kraken:

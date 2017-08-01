@@ -25,7 +25,7 @@ params:
     - relab
     other: ''
   kraken:
-    kraken_db: ''
+    kraken_db: /home/qiz173/Databases/Kraken/stdb/database.kdb
   mash:
     other: -r -m 2 -k 21 -s 1000
     refseq_db: /home/jgsanders/ref_data/mash/RefSeqSketchesDefaults.msh
