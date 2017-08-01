@@ -1,72 +1,59 @@
-
-tmp_dir_root: ./
-
-env: source activate snakemake_assemble
+abundance_samples:
+- Vf
+- Bs
 anvi_env: source activate sn_anvio
-metaphlan_env: source activate humann2
+assemblers:
+- megahit
+- metaspades
+binning_samples:
+- Vf
+- Bs
+env: source activate snakemake_assemble
 humann2_env: source activate humann2
 kraken_env: source activate kraken
-shogun_env: source activate shogun
-
-software:
-  snakemake_folder: ./
-  mash: 
-
+metaphlan_env: source activate humann2
 params:
-  skewer: -x ./adapters/HyperPlus.fa -n -l 100 -m any -q 15
-  atropos: -a GATCGGAAGAGCACACGTCTGAACTCCAGTCAC -A GATCGGAAGAGCGTCGTGTAGGGAAAGGAGTGT -q 15 --minimum-length 100 --pair-filter any
-  cram:
-  maxbin: -plotmarker
-  metaphlan:
-    metaphlan_dir: 
-  mash:
-    other: -r -m 2 -k 21 -s 1000
-    refseq_db: /home/jgsanders/ref_data/mash/RefSeqSketchesDefaults.msh
-  kraken:
-    kraken_db:
+  atropos: ' -a GATCGGAAGAGCACACGTCTGAACTCCAGTCAC -A GATCGGAAGAGCGTCGTGTAGGGAAAGGAGTGT
+    -q 15 --minimum-length 100 --pair-filter any'
+  cram: ''
   humann2:
-    humann2_aa_db: /home/jgsanders/ref_data/humann2/uniref
+    humann2_aa_db: 'humann2_aa_db: /home/jgsanders/ref_data/humann2/uniref'
     humann2_nt_db: /home/jgsanders/ref_data/humann2/chocophlan
     metaphlan_dir: /home/jgsanders/share/metaphlan2
     norms:
     - cpm
     - relab
     other: ''
-
-resources:
-  centrifuge_base: /home/jgsanders/miniconda/envs/anvio2/centrifuge
-  centrifuge_models: /home/jgsanders/miniconda/envs/anvio2/centrifuge/b+h+v/b+h+v
-
-binning_samples:
-  - sample1
-  - sample2
-
-abundance_samples:
-  - sample1
-  - sample2
-
-assemblers:
-  - megahit
-  - metaspades
-
-mapping_assembler: metaspades
-
-trimmer: atropos
-
+  kraken:
+    kraken_db: ''
+  mash:
+    other: -r -m 2 -k 21 -s 1000
+    refseq_db: /home/jgsanders/ref_data/mash/RefSeqSketchesDefaults.msh
+  maxbin: -plotmarker
+  metaphlan:
+    metaphlan_dir: /home/jgsanders/git_sw/metaphlan2
+  skewer: -x ./adapters/HyperPlus.fa -n -l 100 -m any -q 15
 samples:
-  sample1:
-    filter_db: 
-    forward: 
-    - example/reads/Bs_L001_R1.fastq.gz
-    - example/reads/Bs_L002_R1.fastq.gz
+  Bs:
+    filter_db: /home/jgsanders/ref_data/genomes/Homo_sapiens_Bowtie2_v0.1/Homo_sapiens
+    forward:
+    - ./example/reads/Bs_S106_L001_R1_001.fastq.gz
+    - ./example/reads/Bs_S106_L002_R1_001.fastq.gz
     reverse:
-    - example/reads/Bs_L001_R2.fastq.gz
-    - example/reads/Bs_L002_R2.fastq.gz
-  sample2:
-    filter_db: 
-    forward: 
-    - example/reads/Vf_L001_R1.fastq.gz
-    - example/reads/Vf_L002_R1.fastq.gz
+    - ./example/reads/Bs_S106_L001_R2_001.fastq.gz
+    - ./example/reads/Bs_S106_L002_R2_001.fastq.gz
+  Vf:
+    filter_db: /home/jgsanders/ref_data/genomes/Homo_sapiens_Bowtie2_v0.1/Homo_sapiens
+    forward:
+    - ./example/reads/Vf_S104_L001_R1_001.fastq.gz
+    - ./example/reads/Vf_S104_L002_R1_001.fastq.gz
     reverse:
-    - example/reads/Vf_L001_R2.fastq.gz
-    - example/reads/Vf_L002_R2.fastq.gz
+    - ./example/reads/Vf_S104_L001_R2_001.fastq.gz
+    - ./example/reads/Vf_S104_L002_R2_001.fastq.gz
+shogun_env: source activate shogun
+software:
+  mash: ''
+  seqtk: seqtk
+  snakemake_folder: /home/jgsanders/git_sw/snakemake_assemble
+tmp_dir_root: /localscratch
+trimmer: atropos
