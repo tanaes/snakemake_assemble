@@ -32,6 +32,7 @@ params:
   maxbin: -plotmarker
   metaphlan:
     metaphlan_dir: /home/jgsanders/git_sw/metaphlan2
+  shogun: --utree_indx /home/qiz173/Databases/SHOGUN/annotated/utree/stdb.ctr
   skewer: -x ./adapters/HyperPlus.fa -n -l 100 -m any -q 15
 samples:
   Bs:
