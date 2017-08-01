@@ -26,9 +26,6 @@ params:
     other: ''
   kraken:
     kraken_db: /home/qiz173/Databases/Kraken/stdb/database.kdb
-  mash:
-    other: -r -m 2 -k 21 -s 1000
-    refseq_db: /home/jgsanders/ref_data/mash/RefSeqSketchesDefaults.msh
   maxbin: -plotmarker
   metaphlan:
     metaphlan_dir: /home/jgsanders/git_sw/metaphlan2
@@ -53,7 +50,6 @@ samples:
     - ./example/reads/Vf_S104_L002_R2_001.fastq.gz
 shogun_env: source activate shogun
 software:
-  mash: ''
   seqtk: seqtk
   snakemake_folder: /home/jgsanders/git_sw/snakemake_assemble
 tmp_dir_root: /localscratch
