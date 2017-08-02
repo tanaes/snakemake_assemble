@@ -2,15 +2,13 @@ abundance_samples:
 - Vf
 - Bs
 anvi_env: source activate sn_anvio
-assemblers:
-- megahit
-- metaspades
 binning_samples:
 - Vf
 - Bs
 env: source activate snakemake_assemble
 humann2_env: source activate humann2
 kraken_env: source activate kraken
+mapping_assembler: metaspades
 metaphlan_env: source activate humann2
 params:
   atropos: ' -a GATCGGAAGAGCACACGTCTGAACTCCAGTCAC -A GATCGGAAGAGCGTCGTGTAGGGAAAGGAGTGT
@@ -31,6 +29,9 @@ params:
     metaphlan_dir: /home/jgsanders/git_sw/metaphlan2
   shogun: --utree_indx /home/qiz173/Databases/SHOGUN/annotated/utree/stdb.ctr
   skewer: -x ./adapters/HyperPlus.fa -n -l 100 -m any -q 15
+resources:
+  centrifuge_base: /home/jgsanders/miniconda/envs/anvio2/centrifuge
+  centrifuge_models: /home/jgsanders/miniconda/envs/anvio2/centrifuge/b+h+v/b+h+v
 samples:
   Bs:
     filter_db: /home/jgsanders/ref_data/genomes/Homo_sapiens_Bowtie2_v0.1/Homo_sapiens
@@ -53,4 +54,3 @@ software:
   seqtk: seqtk
   snakemake_folder: /home/jgsanders/git_sw/snakemake_assemble
 tmp_dir_root: /localscratch
-trimmer: atropos
