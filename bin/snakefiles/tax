@@ -1,4 +1,3 @@
-
 rule tax_metaphlan2:
     """
     Runs MetaPhlan2 on a set of samples to create a joint taxonomic profile for
@@ -13,7 +12,7 @@ rule tax_metaphlan2:
         forward = qc_dir + "{sample}/filtered/{sample}.R1.trimmed.filtered.fastq.gz",
         reverse = qc_dir + "{sample}/filtered/{sample}.R2.trimmed.filtered.fastq.gz"
     output:
-         tax_dir + "{sample}/metaphlan2/{sample}_metaphlan_output.tsv"
+        tax_dir + "{sample}/metaphlan2/{sample}_metaphlan_output.tsv"
     params:
         metaphlan_dir = config['params']['metaphlan']["metaphlan_dir"],
         metaphlan_env = config['metaphlan_env']
@@ -74,7 +73,7 @@ rule tax_combine_metaphlan2:
 
 rule metaphlan2: 
     input:
-      tax_dir + "metaphlan2/joined_taxonomic_profile.tsv"
+        tax_dir + "metaphlan2/joined_taxonomic_profile.tsv"
 
 
 rule tax_kraken:
@@ -163,7 +162,7 @@ rule tax_shogun:
     input:
         forward = qc_dir + "{sample}/filtered/{sample}.R1.trimmed.filtered.fastq.gz",
         reverse = qc_dir + "{sample}/filtered/{sample}.R2.trimmed.filtered.fastq.gz"
-   output:
+    output:
         taxon_counts = tax_dir + "{sample}/shogun/{sample}.taxon_counts.tsv"
     params:
         shogun = config['params']['shogun'],
