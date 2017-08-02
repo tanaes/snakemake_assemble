@@ -8,35 +8,35 @@
     },
     "qc_atropos": {
         "time"      : "4:00:00",
-        "n"         : 12,
-        "mem"       : 16,
+        "n"         : 8,
+        "mem"       : 8,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "qc_filter": {
         "time"      : "4:00:00",
-        "n"         : 12,
-        "mem"       : 16,
+        "n"         : 4,
+        "mem"       : 8,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "assemble_megahit": {
         "time"      : "12:00:00",
-        "n"         : 12,
+        "n"         : 8,
         "mem"       : 120,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "assemble_metaspades": {
         "time"      : "48:00:00",
-        "n"         : 12,
+        "n"         : 8,
         "mem"       : 240,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "assemble_metaquast": {
         "time"      : "8:00:00",
-        "n"         : 12,
+        "n"         : 8,
         "mem"       : 32,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
@@ -50,15 +50,15 @@
     },
     "map_bowtie2": {
         "time"      : "8:00:00",
-        "n"         : 12,
-        "mem"       : 32,
+        "n"         : 4,
+        "mem"       : 8,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "bin_run_maxbin": {
         "time"      : "8:00:00",
-        "n"         : 12,
-        "mem"       : 32,
+        "n"         : 8,
+        "mem"       : 16,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
@@ -76,17 +76,10 @@
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
-    "map_cram": {
-        "time"      : "1:00:00",
-        "n"         : 16,
-        "mem"       : 8,
-        "output"    : "cluster_logs/{rule}.{wildcards}.out",
-        "error"     : "cluster_logs/{rule}.{wildcards}.err"
-    },
     "anvi_run_hmms": {
         "time" : "8:00:00",
         "n": 8,
-        "mem": 32,
+        "mem": 16,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
@@ -99,15 +92,15 @@
     },
     "anvi_profile": {
         "time" : "8:00:00",
-        "n": 12,
-        "mem": 64,
+        "n": 4,
+        "mem": 16,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
     "anvi_merge": {
         "time" : "8:00:00",
         "n": 4,
-        "mem": 64,
+        "mem": 16,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
@@ -118,22 +111,31 @@
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
-    "prodigal": {
-    },
-    "phylophlan": {
-        "time"      : "8:00:00",
-        "n"         : 12,
-        "mem"       : 10
-    },
-    "phylophlan_combined": {
-        "time"      : "24:00:00",
-        "n"         : 24,
-        "mem"       : 20
-    },
     "tax_metaphlan2": {
         "time": "8:00:00",
         "n": 4,
         "mem": 32,
+        "output"    : "cluster_logs/{rule}.{wildcards}.out",
+        "error"     : "cluster_logs/{rule}.{wildcards}.err"
+    },
+    "tax_kraken": {
+        "time": "8:00:00",
+        "n": 12,
+        "mem": 120,
+        "output"    : "cluster_logs/{rule}.{wildcards}.out",
+        "error"     : "cluster_logs/{rule}.{wildcards}.err"
+    },
+    "tax_kraken_combine_reports": {
+        "time": "2:00:00",
+        "n": 4,
+        "mem": 80,
+        "output"    : "cluster_logs/{rule}.{wildcards}.out",
+        "error"     : "cluster_logs/{rule}.{wildcards}.err"
+    },
+    "tax_shogun": {
+        "time": "12:00:00",
+        "n": 12,
+        "mem": 80,
         "output"    : "cluster_logs/{rule}.{wildcards}.out",
         "error"     : "cluster_logs/{rule}.{wildcards}.err"
     },
