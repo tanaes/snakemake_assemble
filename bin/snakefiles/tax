@@ -184,7 +184,7 @@ rule tax_shogun:
                   {params.seqtk} seq -A {input.reverse} >> {temp_dir}/{wildcards.sample}.fna
                   
                   # run shogun
-                  shogun {params.shogun} \
+                  shogun align {params.shogun} \
                   --threads {threads} \
                   --input {temp_dir}/{wildcards.sample}.fna \
                   --output {temp_dir} \
