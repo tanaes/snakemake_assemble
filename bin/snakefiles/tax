@@ -166,7 +166,8 @@ rule tax_shogun:
         taxon_counts = tax_dir + "{sample}/shogun/{sample}.taxon_counts.tsv"
     params:
         shogun = config['params']['shogun'],
-        seqtk = config['software']['seqtk']
+        seqtk = config['software']['seqtk'],
+        shogun_env = config['shogun_env']
     threads:
         2
     log:
