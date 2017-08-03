@@ -2,6 +2,9 @@ abundance_samples:
 - Vf
 - Bs
 anvi_env: source activate sn_anvio
+assemblers:
+- megahit
+- metaspades
 binning_samples:
 - Vf
 - Bs
@@ -27,7 +30,8 @@ params:
   maxbin: -plotmarker
   metaphlan:
     metaphlan_dir: /home/jgsanders/git_sw/metaphlan2
-  shogun: --utree_indx /home/qiz173/Databases/SHOGUN/annotated/utree/stdb.ctr
+  shogun: --database /home/qiz173/Databases/SHOGUN/annotated/utree/stdb.ctr --aligner
+    utree --level strain
   skewer: -x ./adapters/HyperPlus.fa -n -l 100 -m any -q 15
 resources:
   centrifuge_base: /home/jgsanders/miniconda/envs/anvio2/centrifuge
@@ -54,3 +58,4 @@ software:
   seqtk: seqtk
   snakemake_folder: /home/jgsanders/git_sw/snakemake_assemble
 tmp_dir_root: /localscratch
+trimmer: atropos
