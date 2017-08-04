@@ -184,9 +184,9 @@ rule tax_shogun:
                   {params.seqtk} seq -A {input.reverse} >> {temp_dir}/{wildcards.sample}.fna
                   
                   # run shogun
-                  shogun align {params.shogun} \
+                  shogun_utree_lca.py {params.shogun} \
                   --threads {threads} \
-                  --input {temp_dir}/{wildcards.sample}.fna \
+                  --input {temp_dir} \
                   --output {temp_dir} \
                   2> {log} 1>&2
                   
