@@ -26,12 +26,11 @@ params:
     - relab
     other: ''
   kraken:
-    kraken_db: /home/qiz173/Databases/Kraken/stdb/database.kdb
+    kraken_db: /home/qiz173/Databases/Kraken/stdb
   maxbin: -plotmarker
   metaphlan:
     metaphlan_dir: /home/jgsanders/git_sw/metaphlan2
-  shogun: --database /home/qiz173/Databases/SHOGUN/annotated/utree/stdb.ctr --aligner
-    utree --level strain
+  shogun: --utree_indx /home/qiz173/Databases/SHOGUN/annotated/utree/stdb.ctr
   skewer: -x ./adapters/HyperPlus.fa -n -l 100 -m any -q 15
 resources:
   centrifuge_base: /home/jgsanders/miniconda/envs/anvio2/centrifuge
