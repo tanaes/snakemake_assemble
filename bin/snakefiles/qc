@@ -122,7 +122,7 @@ rule qc_per_sample_multiqc:
         qc_dir + "logs/qc_per_sample_multiqc.log"
     run:
         out_dir = os.path.dirname(output[0])
-        shell("multiqc -f -o {out_dir} {qc_dir}/*/fastqc_per_sample {qc_dir}/logs 2> {log} 1>&2")
+        shell("multiqc -f -s -o {out_dir} {qc_dir}/*/fastqc_per_sample {qc_dir}/logs 2> {log} 1>&2")
 
 
 rule qc:
