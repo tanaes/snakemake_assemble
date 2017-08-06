@@ -145,7 +145,7 @@ rule tax_kraken_combine_reports:
               kraken-mpa-report {input} \
                 --db {params.kraken_db} \
                 --header-line \
-                | sed -i '1 s/.map.txt//g' 1> {output.report} \
+                | sed '1 s/.map.txt//g' 1> {output.report} \
                 2> {log}
               """)
 
