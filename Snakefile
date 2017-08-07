@@ -64,4 +64,8 @@ rule all:
         expand(anvio_dir + "{bin_sample}/{bin_sample}_samples-summary_CONCOCT.tar.gz",
                bin_sample=config['binning_samples']),
         expand(anvio_dir + "{bin_sample}/{bin_sample}.db.anvi_add_maxbin.done",
-               bin_sample=config['binning_samples'])
+               bin_sample=config['binning_samples']),
+    # Taxonomy
+        tax_dir + "metaphlan2/joined_taxonomic_profile.tsv",
+        tax_dir + "kraken/combined_profile.tsv",
+        tax_dir + "shogun/combined_profile.tsv"
