@@ -68,4 +68,13 @@ rule all:
     # Taxonomy
         tax_dir + "metaphlan2/joined_taxonomic_profile.tsv",
         tax_dir + "kraken/combined_profile.tsv",
-        tax_dir + "shogun/combined_profile.tsv"
+        tax_dir + "shogun/combined_profile.tsv",
+    # Function
+        expand(# individual normed bioms
+               func_dir + "{sample}/humann2/{sample}_genefamilies_{norm}.biom",
+               norm = config['params']['humann2']['norms'],
+               sample = samples),
+        expand(# stratified
+               func_dir + "humann2/stratified/combined_genefamilies_{norm}_{mapped}_unstratified.biom",
+               norm = config['params']['humann2']['norms'],
+               mapped=['all','mapped'])
