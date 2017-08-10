@@ -9,7 +9,7 @@ rule qc_atropos:
         forward = qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R1.fastq.gz",
         reverse = qc_dir + "{sample}/{trimmer}_trimmed/{sample}.trimmed.R2.fastq.gz"
     threads:
-        12
+        8
     params:
         atropos = config['params']['atropos']
     log:
@@ -53,7 +53,7 @@ rule qc_filter:
     params:
         filter_db = lambda wildcards: config['samples'][wildcards.sample]['filter_db']
     threads:
-        12
+        4
     log:
         bowtie = qc_dir + "logs/qc_filter.bowtie.sample=[{sample}].log",
         other = qc_dir + "logs/qc_filter.other.sample=[{sample}].log"
