@@ -1,13 +1,13 @@
 abundance_samples:
-- Vf
 - Bs
+- Vf
 anvi_env: source activate sn_anvio
 assemblers:
 - megahit
 - metaspades
 binning_samples:
-- Vf
 - Bs
+- Vf
 env: source activate snakemake_assemble
 humann2_env: source activate humann2
 kraken_env: source activate kraken
