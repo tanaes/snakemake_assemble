@@ -31,6 +31,7 @@ include: snakefiles + "util"
 include: snakefiles + "tax"
 include: snakefiles + "function"
 include: snakefiles + "report"
+include: snakefiles + "mash"
 
 
 rule all:
@@ -77,4 +78,11 @@ rule all:
         expand(# stratified
                func_dir + "humann2/stratified/combined_genefamilies_{norm}_{mapped}_unstratified.biom",
                norm = config['params']['humann2']['norms'],
-               mapped=['all','mapped'])
+               mapped=['all','mapped']),
+    # Mash
+        expand(mash_dir + '{sample}/mash/{sample}.msh',
+               sample=samples),
+        expand(mash_dir + '{sample}/mash/{sample}.refseq.txt',
+               sample=samples),
+        mash_dir + 'combined_analysis/mash.dist.dm',
+        mash_dir + 'combined_analysis/mash.dist.p'

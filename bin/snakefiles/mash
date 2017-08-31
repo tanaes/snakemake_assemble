@@ -1,16 +1,3 @@
-
-#### Mash rules
-rule mash:
-    input:
-        expand('data/{sample}/{run}/mash/{sample}.fna.msh',
-               sample=SAMPLES_PE, run=RUN),
-        expand('data/{sample}/{run}/mash/{sample}.refseq.txt',
-               sample=SAMPLES_PE, run=RUN),
-        expand("data/combined_analysis/{run}/mash/mash.dist.dm", run=RUN),
-        expand("data/combined_analysis/{run}/mash/mash.dist.p", run=RUN)
-
-
-
 rule mash_sketch:
     """
     Sketches a trimmed and host-filtered fastq file. 
@@ -22,34 +9,27 @@ rule mash_sketch:
     -m N: use explicit depth filtering on kmers (bigger memory impact than bloom)
     """
     input:
-        forward  = "data/{sample}/{run}/host_filtered/{sample}_R1.trimmed.host_filtered.fq.gz",
-        reverse  = "data/{sample}/{run}/host_filtered/{sample}_R2.trimmed.host_filtered.fq.gz",
-        unpaired_1 = "data/{sample}/{run}/host_filtered/{sample}_U1.trimmed.host_filtered.fq.gz",
-        unpaired_2 = "data/{sample}/{run}/host_filtered/{sample}_U2.trimmed.host_filtered.fq.gz"
+        forward = qc_dir + "{sample}/filtered/{sample}.R1.trimmed.filtered.fastq.gz",
+        reverse = qc_dir + "{sample}/filtered/{sample}.R2.trimmed.filtered.fastq.gz"
     output:
-        'data/{sample}/{run}/mash/{sample}.fna.msh'
+        sketch = mash_dir + '{sample}/mash/{sample}.msh'
     params:
-        mash = config['SOFTWARE']['mash'],
-        seqtk = config['SOFTWARE']['seqtk'],
-        mash_params = config['PARAMS']['MASH']['OTHER'],
-        output_base = 'data/{sample}/{run}/mash/{sample}.fna'
+        mash = config['software']['mash'],
+        seqtk = config['software']['seqtk'],
+        mash_params = config['params']['mash']['other']
     threads:
         1
     log:
-        "logs/{run}/analysis/mash_sketch_{sample}.log"
+        mash_dir + "logs/mash_sketch.sample=[{sample}].log"
     benchmark:
-        "benchmarks/{run}/analysis/mash_sketch_{sample}.json"
+        "benchmarks/mash/mash_sketch.sample=[{sample}].json"
     run:
+        output_base = os.path.splitext(output['sketch'])
         with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
             shell("""
-                  {params.seqtk} seq -a {input.forward} > {temp_dir}/R1.fna
-                  {params.seqtk} seq -a {input.reverse} > {temp_dir}/R2.fna
-                  {params.seqtk} seq -a {input.unpaired_1} > {temp_dir}/U1.fna
-                  {params.seqtk} seq -a {input.unpaired_2} > {temp_dir}/U2.fna
+                  cat {input.forward} {input.reverse} > {temp_dir}/{wildcards.sample}
 
-                  cat {temp_dir}/R1.fna {temp_dir}/R2.fna {temp_dir}/U1.fna {temp_dir}/U2.fna > {temp_dir}/{wildcards.sample}
-
-                  {params.mash} sketch {params.mash_params} -o {params.output_base} {temp_dir}/{wildcards.sample}
+                  {params.mash} sketch {params.mash_params} -o {output_base} {temp_dir}/{wildcards.sample}
                   """)
 
 
@@ -61,21 +41,21 @@ rule mash_refseq:
     -k should equal 21. 
     """
     input:
-        'data/{sample}/{run}/mash/{sample}.fna.msh'
+        sketch = mash_dir + '{sample}/mash/{sample}.msh'
     output:
-        'data/{sample}/{run}/mash/{sample}.refseq.txt'
+        refseq = mash_dir + '{sample}/mash/{sample}.refseq.txt'
     params:
-        mash = config['SOFTWARE']['mash'],
-        db = config['PARAMS']['MASH']['REFSEQ_DB']
+        mash = config['software']['mash'],
+        db = config['params']['mash']['refseq_db']
     threads:
         1
     log:
-        "logs/{run}/analysis/mash_refseq_{sample}.log"
+        mash_dir + "logs/mash_refseq.sample=[{sample}].log"
     benchmark:
-        "benchmarks/{run}/analysis/mash_refseq_{sample}.json"
+        "benchmarks/mash/mash_refseq.sample=[{sample}].json"
     run:
         shell("""
-              {params.mash} dist {params.db} {input} | sort -gk3 > {output}
+              {params.mash} dist {params.db} {input.sketch} | sort -gk3 > {output.refseq}
               """)
 
 rule mash_dm:
@@ -83,27 +63,25 @@ rule mash_dm:
     Makes mash distance output file
     """
     input:
-        expand( # trimmomatic output for PE data
-            "data/{sample}/{run}/mash/{sample}.fna.msh",
-            sample = SAMPLES_PE,
-            run = RUN)
+        expand(mash_dir + '{sample}/mash/{sample}.msh',
+            sample = samples)
     output:
-        "data/combined_analysis/{run}/mash/mash.dist.txt"
+        dm = mash_dir + 'combined_analysis/mash.dist.txt'
     params:
-        mash = config['SOFTWARE']['mash']
+        mash = config['software']['mash']
     threads:
         1
     log:
-        "logs/{run}/analysis/mash_dm.log"
+        mash_dir + "logs/mash_dm.log"
     benchmark:
-        "benchmarks/{run}/analysis/mash_dm.json"
+        "benchmarks/mash/mash_dm.json"
     run:
         for i in range(len(input)):
             for j in range(i,len(input)):
                 thing1 = input[i]
                 thing2 = input[j]
                 shell("""
-                      {params.mash} dist {thing1} {thing2} >> {output}
+                      {params.mash} dist {thing1} {thing2} >> {output.dm}
                       """)
 
 rule mash_dm_write:
@@ -111,16 +89,16 @@ rule mash_dm_write:
     Writes square distance matrices from p values and distances that Mash makes
     """
     input:
-        "data/combined_analysis/{run}/mash/mash.dist.txt"
+        dm = mash_dir + 'combined_analysis/mash.dist.txt'
     output:
-        dist_matrix = "data/combined_analysis/{run}/mash/mash.dist.dm",
-        p_matrix = "data/combined_analysis/{run}/mash/mash.dist.p"
+        dist_matrix = mash_dir + 'combined_analysis/mash.dist.dm',
+        p_matrix = mash_dir + 'combined_analysis/mash.dist.p'
     threads:
         1
     log:
-        "logs/{run}/analysis/mash_dm_write.log"
+        mash_dir + "logs/mash_dm_write.log"
     benchmark:
-        "benchmarks/{run}/analysis/mash_dm_write.json"
+        "benchmarks/mash/mash_dm_write.json"
     run:
         from skbio.stats.distance import DissimilarityMatrix
         import pandas as pd
@@ -150,4 +128,14 @@ rule mash_dm_write:
 
         sk_dm.write(output['dist_matrix'])
         sk_pm.write(output['p_matrix'])
+
+#### Mash rules
+rule mash:
+    input:
+        expand(mash_dir + '{sample}/mash/{sample}.msh',
+               sample=samples),
+        expand(mash_dir + '{sample}/mash/{sample}.refseq.txt',
+               sample=samples),
+        mash_dir + 'combined_analysis/mash.dist.dm',
+        mash_dir + 'combined_analysis/mash.dist.p'
 
