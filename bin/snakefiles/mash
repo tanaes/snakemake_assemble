@@ -24,7 +24,7 @@ rule mash_sketch:
     benchmark:
         "benchmarks/mash/mash_sketch.sample=[{sample}].json"
     run:
-        output_base = os.path.splitext(output['sketch'])
+        output_base = os.path.splitext(output['sketch'])[0]
         with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
             shell("""
                   cat {input.forward} {input.reverse} > {temp_dir}/{wildcards.sample}
