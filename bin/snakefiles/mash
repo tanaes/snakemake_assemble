@@ -16,7 +16,8 @@ rule mash_sketch:
     params:
         mash = config['software']['mash'],
         seqtk = config['software']['seqtk'],
-        mash_params = config['params']['mash']['other']
+        mash_params = config['params']['mash']['other'],
+        depth = config['params']['mash']['depth']
     threads:
         1
     log:
@@ -25,10 +26,16 @@ rule mash_sketch:
         "benchmarks/mash/mash_sketch.sample=[{sample}].json"
     run:
         output_base = os.path.splitext(output['sketch'])[0]
+        
         with tempfile.TemporaryDirectory(dir=TMP_DIR_ROOT) as temp_dir:
             shell("""
                   cat {input.forward} {input.reverse} > {temp_dir}/{wildcards.sample}
 
+                  if [ -n "{params.depth}" ]; then
+                    seqtk sample {temp_dir}/{wildcards.sample} {params.depth} > {temp_dir}/subsampled.fastq
+                    mv {temp_dir}/subsampled.fastq {temp_dir}/{wildcards.sample}
+                  fi
+                  
                   {params.mash} sketch {params.mash_params} -o {output_base} {temp_dir}/{wildcards.sample}
                   """)
 

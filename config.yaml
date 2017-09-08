@@ -1,13 +1,13 @@
 abundance_samples:
-- Bs
 - Vf
+- Bs
 anvi_env: source activate sn_anvio
 assemblers:
 - megahit
 - metaspades
 binning_samples:
-- Bs
 - Vf
+- Bs
 env: source activate snakemake_assemble
 humann2_env: source activate humann2
 kraken_env: source activate kraken
@@ -54,6 +54,7 @@ samples:
     - ./example/reads/Vf_S104_L002_R2_001.fastq.gz
 shogun_env: source activate shogun
 software:
+  mash: /home/jgsanders/git_sw/git_bin/mash
   seqtk: seqtk
   snakemake_folder: /home/jgsanders/git_sw/snakemake_assemble
 tmp_dir_root: /localscratch
